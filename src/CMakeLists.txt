@@ -1,0 +1,2 @@
+file(GLOB_RECURSE CrystalNet_sources ${PROJECT_SOURCE_DIR}/src/*/*.cpp ${PROJECT_SOURCE_DIR}/src/*/*/*.cpp ${PROJECT_SOURCE_DIR}/src/*/*/*/*.cpp)
+add_library(CrystalNet_shared SHARED ${CrystalNet_sources})
