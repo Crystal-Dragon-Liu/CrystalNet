@@ -5,7 +5,3 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-namespace ConfigIO
-{
-    
-} // namespace ConfigIO

@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cstring>
 #include "include/Utils/utils.h"
 /* no idea if it should be removed. */
 struct KeyValuePair
@@ -15,8 +16,27 @@ struct KeyValuePair
 };
 
 namespace ConfigIO{
-    // template<class _Tp>
-    // int             readConfig(char* s, NodeList<_Tp>* configList);
+
+
+    
+    // extern int readConfig(const std::string& line, NodeList* configList);
+    template<class NetAlloc=MyNetAlloc>
+    int readConfig(const std::string& line, NodeList* configList){
+        // typedef NetSimpleAlloc<char, NetAlloc> NodeAllocator;
+        size_t i;
+        size_t len  =   line.size();
+        for(i = 0; i < len; ++i){if(line[i] == '='){break;}}
+        if(i == len-1) return 0;
+        std::cout << "key'length -> " << len - i + 1 << std::endl;
+        std::cout << "value'length -> " << i + 1 << std::endl;
+        // char* val   =   NetSimpleAlloc::allocate(len - i + 1);
+        // char* key   =   NetSimpleAlloc::allocate(i + 1);
+        // strcpy(key, line.substr(0, i+1).data());
+        // strcpy(val, line.substr(i, len-i+1).data());
+        return 0;
+    }
+
+
 
     // template<class _Tp>
     // void            configInsert(NodeList<_Tp>* l, char* key, char* value);
@@ -29,7 +49,7 @@ namespace ConfigIO{
         @brief read the .data and .cfg file with configuration of dataset.
         @param filename: the path of configuration file.
     */
-    template<class _Tp>
+    template<class NetAlloc=MyNetAlloc>
     NodeList* readDataAndCfg(const std::string& filename){
         std::ifstream dataFile(filename);
         std::string line;
@@ -51,6 +71,7 @@ namespace ConfigIO{
             std::cout << std::endl;
             row_num++;
             // TODO parse each item.
+            readConfig<NetAlloc>(line, nullptr);
         }
         dataFile.close();
         return nullptr;
