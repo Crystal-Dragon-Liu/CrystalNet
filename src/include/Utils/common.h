@@ -1,6 +1,14 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include <stdlib.h>
+#include <iostream>
+struct KeyValuePair
+{
+    char* key_;
+    char* value_;
+    int used_;
+};
+
 namespace MyAllocFunc{
 
     #define __DETECT_BAD_ALLOC std::cerr << "failed to allocate space!" << std::endl; exit(1)

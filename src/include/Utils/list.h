@@ -2,11 +2,12 @@
 #define	LIST_H
 #include "include/Utils/common.h"
 #include <stdlib.h>
+#include "include/Utils/utils.h"
 using namespace MyAllocFunc;
 // void (*callbackDeleteFunc)(void*);
 // template<class _Tp> void (*callbackDeleteVal)(_Tp*);
-
-
+typedef void	(*callbackPrintNodes)(void*);
+typedef void	(*callbackDeleteValues)(void*);
 /* Node as a element of list we defined. */
 struct Node{
 	Node():value_(nullptr), next_(nullptr), prev_(nullptr){}
@@ -35,6 +36,9 @@ namespace NodeOP
 	NodeList* makeNodeList(){
 		typedef NetSimpleAlloc<NodeList, NetAlloc> NodeListAllocator; // define a allocator.
 		NodeList* newList = NodeListAllocator::allocate();
+		newList->back_ 	= nullptr;
+		newList->front_	= nullptr;
+		newList->size_	=	0;
 		return newList;
 		}
 
@@ -66,13 +70,22 @@ namespace NodeOP
 
 	/* @brief delete all the node with the ptr to value_ */
 	template<class NetAlloc=MyNetAlloc>
-	void freeNode(Node* node){
+	void freeNode(Node* node, callbackDeleteValues deleteCallback = UtilFunc::freeKyp){
 		typedef NetSimpleAlloc<Node, NetAlloc> NodeAllocator; // define a allocator.
 		Node* next = nullptr;
 		while(node){
 			next = node->next_;
 			// callbackDeleteVal(node->value_);
-			free(node->value_);
+			// KeyValuePair* pKeyValue = reinterpret_cast<KeyValuePair*>(node->value_);
+			// if(pKeyValue)
+			// {
+			// 	free(pKeyValue->key_);
+			// 	free(pKeyValue->value_);
+			// }
+			// else{
+			// 	std::cout << "failed to convert <void*> to <KeyValuePair*>" << std::endl;
+			// }
+			(*deleteCallback)(node->value_);
 			//delete node->value_;
 			NodeAllocator::deallocate(node);
 			node = next;
@@ -86,6 +99,7 @@ namespace NodeOP
 		typedef NetSimpleAlloc<NodeList, NetAlloc> NodeListAllocator; // define a allocator.
 		freeNode(nodeList->front_); 	/// delete all the nodes with value_.
 		NodeListAllocator::deallocate(nodeList);					/// delete nodeList obj.
+
 	}
 
 		// TODO pop operation
@@ -106,6 +120,8 @@ namespace NodeOP
 		nodeList->size_--;
 		return val;
 	}
+
+	extern void printAllNodes(NodeList* nodeList, callbackPrintNodes callback);
 
 	/*
 		@brief generate a 2d array from NodeList,

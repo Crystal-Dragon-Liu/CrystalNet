@@ -7,23 +7,13 @@
 #include <iostream>
 #include <cstring>
 #include "include/Utils/utils.h"
+#include "include/Utils/common.h"
+using namespace MyAllocFunc;
 /* no idea if it should be removed. */
-struct KeyValuePair
-{
-    char* key_;
-    char* value_;
-    int used_;
-};
+
 
 namespace ConfigIO{
-
-
-    
-
-
-
-
-    template<class NetAlloc=MyNetAlloc>
+    template<class NetAlloc=MyAllocFunc::MyNetAlloc>
     void  configInsert(NodeList* l, char* key, char* value){
         typedef NetSimpleAlloc<KeyValuePair, NetAlloc> KvpAllocator;
          // kvp也是一个结构体，包含两个C风格字符数组指针：key和val，对应键值和值，
@@ -33,22 +23,16 @@ namespace ConfigIO{
     // p->val = val;
     // p->used = 0;
     // (l, p);
+        std::cout << "begining load key&value." << std::endl;
         KeyValuePair* pKeyValue =   KvpAllocator::allocate();
         pKeyValue->key_     =   nullptr;
         pKeyValue->value_   =   nullptr;
-        pKeyValue->used_    =   0;
         pKeyValue->key_     =   key;
         pKeyValue->value_   =   value;
-        std::cout << pKeyValue->used_ << std::endl;
-        std::cout << "key: " << pKeyValue->key_[0];
-        int i = 0;
-        if(!key) std::cout << "zero" << std::endl;
-        while(key[i] != '\0'){
-            std::cout <<  key[i] << " ";
-            i++;
-        }
-        std::cout << std::endl;
-        // NodeOP::insertNode(l, pKeyValue);
+        pKeyValue->used_    =   0;
+        // UtilFunc::printCharArray(pKeyValue->key_);
+        // UtilFunc::printCharArray(pKeyValue->value_);
+        NodeOP::insertNode(l, pKeyValue);
     }
 
     // template<class _Tp>
@@ -68,18 +52,11 @@ namespace ConfigIO{
         char* key   =   NodeAllocator::allocate(i + 1);
         if(val == nullptr || key == nullptr) return 0;
         // TODO THERE ARE SOME BUGS
-        // const char* keyStr = line.substr(0, i).data();
-        // strcpy(key, keyStr);
-        // const char* val_str = line.substr(i+1, len-i-1).data();
-        // strcpy(val, val_str);
         UtilFunc::copyCharArray(key, line.substr(0, i));
-        int index = 0;
-        while(key[index] != '\0'){
-            std::cout <<  key[index] << " ";
-            index++;
-        }
-        std::cout << "key loaded" << std::endl;
-        // configInsert(configList, key, val);
+        UtilFunc::copyCharArray(val, line.substr(i+1, len-i-1));
+        configInsert(configList, key, val);
+        // NodeAllocator::deallocate(val);
+        // NodeAllocator::deallocate(key);
         return 1;
     }
 
@@ -98,21 +75,11 @@ namespace ConfigIO{
             int len = line.size();
             if(len == 0 || line[0] == '\0' || line[0] == '#' || line[0] == ';') continue;
             UtilFunc::stripUselessChr(line);
-            len = line.size();
-            std::cout << "<" << line  << ">" << std::endl;
-            std::cout << "row_line_num : " << len << std::endl;
-            std::cout << "[";
-            for(int i = 0; i < len; i++){
-                std::cout << line[i] << ",";
-                if(line[i] == '\n' || line[i] == '\0')
-                std::cout << "<unexpected char>"; 
-            }
-            std::cout << "]";
-            std::cout << std::endl;
             row_num++;
             // TODO parse each item.
-            readConfig<NetAlloc>(line, list);
+            if(readConfig<NetAlloc>(line, list) == 0) return nullptr;
         }
+        std::cout << "done" << std::endl;
         dataFile.close();
         return list;
     }

@@ -1,5 +1,6 @@
 #include "include/Utils/utils.h"
 #include <iostream>
+#include "include/Utils/common.h"
 namespace UtilFunc
 {
     void file_error(char* filename){
@@ -37,7 +38,24 @@ namespace UtilFunc
             index++;
         }
         std::cout << "]";
+    }
+
+    void printkyp(void* data){
+        KeyValuePair* pKeyValue = reinterpret_cast<KeyValuePair*>(data);
+        printCharArray(pKeyValue->key_);
+        std::cout << ": ";
+        printCharArray(pKeyValue->value_);
         std::cout << std::endl;
     }
-   
+    void freeKyp(void* data){
+        KeyValuePair* pKeyValue = reinterpret_cast<KeyValuePair*>(data);
+        if(pKeyValue)
+		{
+				free(pKeyValue->key_);
+				free(pKeyValue->value_);
+                free(data);
+		}
+        else{__DETECT_BAD_ALLOC;}
+    }
+
 }

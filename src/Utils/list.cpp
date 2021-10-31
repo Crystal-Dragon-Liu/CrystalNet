@@ -1,6 +1,6 @@
 #include "include/Utils/list.h"
 
-using namespace NodeOP;
+namespace NodeOP{
 
 void** generateArrayfromList(NodeList* l){
 		void **a = (void**)calloc(l->size_, sizeof(void*));
@@ -12,3 +12,13 @@ void** generateArrayfromList(NodeList* l){
     	}
     	return a;
 	}
+void printAllNodes(NodeList* nodeList, callbackPrintNodes callback){
+	Node* currentNode = nodeList->front_;
+	while(currentNode){
+		(*callback)(currentNode->value_);
+		currentNode = currentNode->next_;
+	}
+}
+}
+
+
