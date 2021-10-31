@@ -22,5 +22,22 @@ namespace UtilFunc
         }
         str = str.substr(0, len-offset);
     }
-    
+    void copyCharArray(char* des, const std::string& line){
+        size_t i = 0;
+        for(i = 0; i < line.size();i++){
+            des[i] = line[i];
+        }
+        des[i] = '\0';
+    }
+    void printCharArray(char* data){
+        int index = 0;
+        std::cout << "[";
+        while(data[index] != '\0'){
+            std::cout <<  data[index] << " ";
+            index++;
+        }
+        std::cout << "]";
+        std::cout << std::endl;
+    }
+   
 }

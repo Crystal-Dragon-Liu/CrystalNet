@@ -7,6 +7,7 @@
 
 TEST(BasicListTest, Test1){
 	const std::string filename("/root/test_data/coco.data");
-	ConfigIO::readDataAndCfg<int>(filename);
+	NodeList* list = ConfigIO::readDataAndCfg(filename);
+	NodeOP::freeNodeList(list);
 	std::cout << "<" << filename << "> loaded." << std::endl;
 }

@@ -3,8 +3,7 @@
 #include <stdlib.h>
 namespace MyAllocFunc{
 
-
-
+    #define __DETECT_BAD_ALLOC std::cerr << "failed to allocate space!" << std::endl; exit(1)
     /*
         @brief implement a so fxxking simple alloc without any problem
                 involving out of memory. 
@@ -12,7 +11,10 @@ namespace MyAllocFunc{
     //TODO memory problem should be fixed.
     class MyNetAlloc{
        public:
-            static void*    allocate(size_t n){void* result = malloc(n); return result;}
+            static void*    allocate(size_t n){
+                void* result = malloc(n);
+                if(!result) {__DETECT_BAD_ALLOC;}
+                return result;}
             static void     deallocate(void* p, size_t){free(p);}
     };
 
