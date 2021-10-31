@@ -11,5 +11,5 @@ TEST(BasicListTest, Test1){
 	callbackPrintNodes pCallback = UtilFunc::printkyp;
 	NodeOP::printAllNodes(list, pCallback);
 	NodeOP::freeNodeList(list);
-	// std::cout << "<" << filename << "> loaded." << std::endl;
+	std::cout << "<" << filename << "> loaded." << std::endl;
 }

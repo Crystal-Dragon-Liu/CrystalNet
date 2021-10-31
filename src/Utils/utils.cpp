@@ -23,6 +23,7 @@ namespace UtilFunc
         }
         str = str.substr(0, len-offset);
     }
+
     void copyCharArray(char* des, const std::string& line){
         size_t i = 0;
         for(i = 0; i < line.size();i++){
@@ -30,6 +31,7 @@ namespace UtilFunc
         }
         des[i] = '\0';
     }
+    
     void printCharArray(char* data){
         int index = 0;
         std::cout << "[";
@@ -47,6 +49,7 @@ namespace UtilFunc
         printCharArray(pKeyValue->value_);
         std::cout << std::endl;
     }
+
     void freeKyp(void* data){
         KeyValuePair* pKeyValue = reinterpret_cast<KeyValuePair*>(data);
         if(pKeyValue)

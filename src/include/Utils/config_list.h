@@ -16,13 +16,6 @@ namespace ConfigIO{
     template<class NetAlloc=MyAllocFunc::MyNetAlloc>
     void  configInsert(NodeList* l, char* key, char* value){
         typedef NetSimpleAlloc<KeyValuePair, NetAlloc> KvpAllocator;
-         // kvp也是一个结构体，包含两个C风格字符数组指针：key和val，对应键值和值，
-    // 此处key为变量名，val为变量的值（比如类别数，路径名称，注意都是字符类型数据）
-    // kvp *p = malloc(sizeof(kvp));
-    // p->key = key;
-    // p->val = val;
-    // p->used = 0;
-    // (l, p);
         std::cout << "begining load key&value." << std::endl;
         KeyValuePair* pKeyValue =   KvpAllocator::allocate();
         pKeyValue->key_     =   nullptr;
@@ -30,16 +23,13 @@ namespace ConfigIO{
         pKeyValue->key_     =   key;
         pKeyValue->value_   =   value;
         pKeyValue->used_    =   0;
-        // UtilFunc::printCharArray(pKeyValue->key_);
-        // UtilFunc::printCharArray(pKeyValue->value_);
         NodeOP::insertNode(l, pKeyValue);
     }
 
+    //TODO find item of configuration from nodelist.
     // template<class _Tp>
     // char*           configFind(NodeList<_Tp>* l, char* key);
 
-
-    // extern int readConfig(const std::string& line, NodeList* configList);
     template<class NetAlloc=MyNetAlloc>
     int readConfig(const std::string& line, NodeList* configList){
         if(!configList) return 0;
@@ -55,11 +45,8 @@ namespace ConfigIO{
         UtilFunc::copyCharArray(key, line.substr(0, i));
         UtilFunc::copyCharArray(val, line.substr(i+1, len-i-1));
         configInsert(configList, key, val);
-        // NodeAllocator::deallocate(val);
-        // NodeAllocator::deallocate(key);
         return 1;
     }
-
 
     /*
         @brief read the .data and .cfg file with configuration of dataset.
@@ -76,7 +63,6 @@ namespace ConfigIO{
             if(len == 0 || line[0] == '\0' || line[0] == '#' || line[0] == ';') continue;
             UtilFunc::stripUselessChr(line);
             row_num++;
-            // TODO parse each item.
             if(readConfig<NetAlloc>(line, list) == 0) return nullptr;
         }
         std::cout << "done" << std::endl;

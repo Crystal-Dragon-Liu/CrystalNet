@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include "include/Utils/utils.h"
 using namespace MyAllocFunc;
-// void (*callbackDeleteFunc)(void*);
-// template<class _Tp> void (*callbackDeleteVal)(_Tp*);
+
 typedef void	(*callbackPrintNodes)(void*);
 typedef void	(*callbackDeleteValues)(void*);
 /* Node as a element of list we defined. */
@@ -42,8 +41,6 @@ namespace NodeOP
 		return newList;
 		}
 
-
-
 	/*
 	 @brief insert Node into NodeList obj.
 	 */
@@ -75,18 +72,7 @@ namespace NodeOP
 		Node* next = nullptr;
 		while(node){
 			next = node->next_;
-			// callbackDeleteVal(node->value_);
-			// KeyValuePair* pKeyValue = reinterpret_cast<KeyValuePair*>(node->value_);
-			// if(pKeyValue)
-			// {
-			// 	free(pKeyValue->key_);
-			// 	free(pKeyValue->value_);
-			// }
-			// else{
-			// 	std::cout << "failed to convert <void*> to <KeyValuePair*>" << std::endl;
-			// }
 			(*deleteCallback)(node->value_);
-			//delete node->value_;
 			NodeAllocator::deallocate(node);
 			node = next;
 		}
@@ -121,6 +107,9 @@ namespace NodeOP
 		return val;
 	}
 
+	/*
+		@brief print all the nodes which belong to nodeList expected.
+	*/
 	extern void printAllNodes(NodeList* nodeList, callbackPrintNodes callback);
 
 	/*

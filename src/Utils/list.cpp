@@ -12,6 +12,7 @@ void** generateArrayfromList(NodeList* l){
     	}
     	return a;
 	}
+	
 void printAllNodes(NodeList* nodeList, callbackPrintNodes callback){
 	Node* currentNode = nodeList->front_;
 	while(currentNode){
