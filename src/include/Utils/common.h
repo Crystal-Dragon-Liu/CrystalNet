@@ -11,8 +11,8 @@ struct KeyValuePair
 };
 
 namespace MyAllocFunc{
-
     #define __DETECT_BAD_ALLOC std::cerr << "failed to allocate space!" << std::endl; exit(1)
+
     /*
         @brief implement a so fxxking simple alloc without any problem
                 involving out of memory. 
@@ -24,6 +24,20 @@ namespace MyAllocFunc{
                 void* result = malloc(n);
                 if(!result) {__DETECT_BAD_ALLOC;}
                 return result;}
+            static void*    allocate(size_t num, size_t itemSize){
+                void* result = allocate(num*itemSize);
+                return result;
+            }
+            static void     deallocate(void* p, size_t){free(p);}
+    };
+
+    class MyNetCAlloc{
+        public:
+            static void*    allocate(size_t num, size_t itemSize){
+                void* result = calloc(num, itemSize);
+                if(!result) {__DETECT_BAD_ALLOC;}
+                return result;
+            }
             static void     deallocate(void* p, size_t){free(p);}
     };
 
@@ -39,6 +53,8 @@ namespace MyAllocFunc{
             }
         static _Tp* allocate(void){
             return reinterpret_cast<_Tp*>(NetAlloc::allocate(sizeof(_Tp)));}
+        static _Tp* allocate(size_t num, size_t itemSize){
+            return reinterpret_cast<_Tp*>(NetAlloc::allocate(num, itemSize));}
         static void deallocate(_Tp* p, size_t n){
             if(0 != n) NetAlloc::deallocate(p, n * sizeof(_Tp));}
         static void deallocate(_Tp*p){

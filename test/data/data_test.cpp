@@ -18,5 +18,5 @@ TEST(BasicListTest, Test1){
 	UtilFunc::printCharArray(val_search);
 	std::cout << std::endl;
 	NodeOP::freeNodeList(list);
-	std::cout << "<" << filename << "> loaded." << std::endl;
+	// std::cout << "<" << filename << "> loaded." << std::endl;
 }
