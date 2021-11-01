@@ -15,9 +15,7 @@ struct Node{
 	struct	Node*	prev_; /// ptr to previous Node.
 };
 
-/*
- * @brief NodeList is a list that stores a bunch of nodes.
- */
+/* @brief	NodeList is a list that stores a bunch of nodes.*/
 struct	NodeList{
 	NodeList():size_(0), front_(nullptr), back_(nullptr){}
 	int 		size_;
@@ -30,7 +28,6 @@ struct	NodeList{
 
 namespace NodeOP
 {
-	// void* makeNodeList();
 	template<class NetAlloc=MyNetAlloc>
 	NodeList* makeNodeList(){
 		typedef NetSimpleAlloc<NodeList, NetAlloc> NodeListAllocator; // define a allocator.
@@ -41,9 +38,7 @@ namespace NodeOP
 		return newList;
 		}
 
-	/*
-	 @brief insert Node into NodeList obj.
-	 */
+	/*@brief	insert Node into NodeList obj.*/
 	template<class NetAlloc=MyNetAlloc>
 	void insertNode(NodeList* nodeList, 
 					void *val)
@@ -65,10 +60,10 @@ namespace NodeOP
 		++nodeList->size_;
 	}
 
-	/* @brief delete all the node with the ptr to value_ */
+	/* @brief	delete all the node with the ptr to value_ */
 	template<class NetAlloc=MyNetAlloc>
 	void freeNode(Node* node, callbackDeleteValues deleteCallback = UtilFunc::freeKyp){
-		typedef NetSimpleAlloc<Node, NetAlloc> NodeAllocator; // define a allocator.
+		typedef NetSimpleAlloc<Node, NetAlloc> NodeAllocator; /// define a allocator.
 		Node* next = nullptr;
 		while(node){
 			next = node->next_;
@@ -78,20 +73,17 @@ namespace NodeOP
 		}
 	}
 
-	/* @brief delete NodeList. 
-		a deleter is needed.*/
+	/* @brief	delete NodeList. a deleter is needed.*/
 	template<class NetAlloc=MyNetAlloc>
 	void freeNodeList(NodeList* nodeList){
-		typedef NetSimpleAlloc<NodeList, NetAlloc> NodeListAllocator; // define a allocator.
-		freeNode(nodeList->front_); 	/// delete all the nodes with value_.
-		NodeListAllocator::deallocate(nodeList);					/// delete nodeList obj.
+		typedef NetSimpleAlloc<NodeList, NetAlloc> NodeListAllocator; /// define a allocator.
+		freeNode(nodeList->front_); /// delete all the nodes with value_.
+		NodeListAllocator::deallocate(nodeList); /// delete nodeList obj.
 
 	}
 
 		// TODO pop operation
-	/*
-		@brief pop the last node from NodeList obj.
-	*/
+	/* @brief	pop the last node from NodeList obj. */
 	template<class NetAlloc=MyNetAlloc>
 	void* popNodeList(NodeList* nodeList){
 		typedef NetSimpleAlloc<Node, NetAlloc> NodeAllocator;
@@ -107,15 +99,12 @@ namespace NodeOP
 		return val;
 	}
 
-	/*
-		@brief print all the nodes which belong to nodeList expected.
-	*/
+	/* @brief	print all the nodes which belong to nodeList expected.*/
 	extern void printAllNodes(NodeList* nodeList, callbackPrintNodes callback);
 
 	/*
-		@brief generate a 2d array from NodeList,
-				each value_ of Node obj in NodeList is similar with std::string.
-	*/
+		@brief	generate a 2d array from NodeList,
+				each value_ of Node obj in NodeList is similar with std::string.*/
 	extern void** generateArrayfromList(NodeList* l);
 }
 
