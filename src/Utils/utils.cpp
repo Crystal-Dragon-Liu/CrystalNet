@@ -3,6 +3,7 @@
 #include "include/Utils/common.h"
 namespace UtilFunc
 {
+
     void file_error(char* filename){
         std::cout << std::string(filename) << std::endl;
         exit(0);
@@ -33,6 +34,7 @@ namespace UtilFunc
     }
     
     void printCharArray(char* data){
+        if(!data) return;
         int index = 0;
         std::cout << "[";
         while(data[index] != '\0'){

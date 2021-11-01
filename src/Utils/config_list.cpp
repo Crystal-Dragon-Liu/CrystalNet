@@ -18,9 +18,8 @@ namespace ConfigIO{
                 pKeyValue->used_ = 1;
                 return pKeyValue->value_;
             }
-            currentNode =   currentNode->next_;
+            currentNode = currentNode->next_;
         }
         return nullptr;
     }
-
 }
