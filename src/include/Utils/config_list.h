@@ -13,23 +13,27 @@ using namespace MyAllocFunc;
 
 
 namespace ConfigIO{
+
+    /*
+        @brief  insert a pair into configuration sturct which
+                is represented by a pointer to NodeList.
+    */
     template<class NetAlloc=MyAllocFunc::MyNetAlloc>
     void  configInsert(NodeList* l, char* key, char* value){
         typedef NetSimpleAlloc<KeyValuePair, NetAlloc> KvpAllocator;
-        std::cout << "begining load key&value." << std::endl;
         KeyValuePair* pKeyValue =   KvpAllocator::allocate();
-        pKeyValue->key_     =   nullptr;
-        pKeyValue->value_   =   nullptr;
         pKeyValue->key_     =   key;
         pKeyValue->value_   =   value;
         pKeyValue->used_    =   0;
         NodeOP::insertNode(l, pKeyValue);
     }
 
-    //TODO find item of configuration from nodelist.
-    // template<class _Tp>
-    // char*           configFind(NodeList<_Tp>* l, char* key);
 
+    /*
+        @brief  read configuration of one line, and insert the information
+                detected into the configuration struct represented by a
+                pointer to NodeList.
+    */
     template<class NetAlloc=MyNetAlloc>
     int readConfig(const std::string& line, NodeList* configList){
         if(!configList) return 0;
@@ -69,6 +73,13 @@ namespace ConfigIO{
         dataFile.close();
         return list;
     }
+
+    //TODO find item of configuration from nodelist.
+    /*
+        @brief  find value according to the key expected from NodeList.
+    */
+    extern char*  configFind(NodeList* l, char* key);
+
 }
 
 
