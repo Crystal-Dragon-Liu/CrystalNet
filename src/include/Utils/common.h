@@ -29,6 +29,11 @@ namespace MyAllocFunc{
                 return result;
             }
             static void     deallocate(void* p, size_t){free(p);}
+            static void*    reallocate(void* p, size_t new_size){
+                void* result = realloc(p, new_size);
+                if(!result) {__DETECT_BAD_ALLOC;}
+                return result;
+            }
     };
 
     class MyNetCAlloc{
@@ -39,6 +44,11 @@ namespace MyAllocFunc{
                 return result;
             }
             static void     deallocate(void* p, size_t){free(p);}
+            static void*    reallocate(void* p, size_t new_size){
+                void* result = realloc(p, new_size);
+                if(!result) {__DETECT_BAD_ALLOC;}
+                return result;
+            }
     };
 
     /*
@@ -59,6 +69,8 @@ namespace MyAllocFunc{
             if(0 != n) NetAlloc::deallocate(p, n * sizeof(_Tp));}
         static void deallocate(_Tp*p){
             NetAlloc::deallocate(p, sizeof(_Tp));}
+        static _Tp* reallocate(_Tp* p, size_t new_size){
+            return reinterpret_cast<_Tp*>(NetAlloc::reallocate(p, new_size));}
     };
 }
 

@@ -23,17 +23,29 @@ TEST(BasicListTest, Test1){
 	UtilFunc::printCharArray(val_search);
 	std::cout << std::endl;
 	NodeOP::freeNodeList(list);
-	// std::cout << "<" << filename << "> loaded." << std::endl;
 }
 
 /*
 	Test List:
-	1. create a 2d array.
-	2. free it.
+	1. create a 2d array 'matrix'.
+	2. create a new 'matrix_2' with the data copied from 'matrix'.
+	3. free two these Matrix obj.
 */
 TEST(BasicListTest, Test2)
 {
-	Matrix* matrix = new Matrix(3, 3);
+	Matrix* matrix = new Matrix(5, 5);
+	auto data = matrix->getData();
+	// initialize data with 1.
+	for(size_t i = 0; i < matrix->getRowCount();i++){
+		for(size_t j = 0; j < matrix->getColCount(); j++){
+			data[i][j] = 1;
+		}
+	}
+	Matrix* matrix_2 = new Matrix(5, 5);
+	*matrix_2 = *matrix;
+	MatrixFunc::printMatrix(*matrix_2);
 	delete matrix;
+	delete matrix_2;
 }
+
 

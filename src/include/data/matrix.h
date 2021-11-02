@@ -22,16 +22,17 @@ public:
         */
         Matrix(size_t rows, size_t cols);
         virtual ~Matrix();
-        float** getData(){ return rawdata_; }
+        float** getData() const { return data_; }
         size_t  getRowCount() const {return row_count_;}
         size_t  getColCount() const {return col_count_;}
         Matrix& operator=(Matrix& data);
+        // maybe the data is dangerous, but i don care. :)
 private:
         /* maybe copy constructor should be forbidden. */
+        float** data_;
         Matrix(const Matrix& matrix){}
         size_t  row_count_;
         size_t  col_count_;
-        float** rawdata_;
 };
 
 
@@ -48,14 +49,20 @@ namespace MatrixFunc{
         */
         extern float**  make2DArray(size_t rows, size_t cols);
         
-        //TODO create a brand new Matrix obj with same data from matrix expected.
-        extern Matrix*  copyMatrix(Matrix* matrix);
 
         /*      @brief  free the raw data which is usually belong to Matrix obj.
                 @param  rawData: the data with type float**.
                 @param  row_count: the row count of data.       
         */
         extern void     freeRawData(float** rawData, size_t row_count);
+
+        /*
+                @brief  print Matrix data with its size which is awesome function.
+        */
+        extern void     printMatrix(const Matrix& matrix);
+
+        // TODO resize Matrix.
+        extern void     resizeMatrix(Matrix* m, size_t size);
       
 }
 
