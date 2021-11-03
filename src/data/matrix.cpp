@@ -88,6 +88,25 @@ namespace MatrixFunc{
         }
     }
 
+    float*     popColumn(Matrix* matrix, size_t column){
+        //generate a new column to store the popped column.
+        auto val = matrix->getData();
+        if(column >= matrix->getColCount() || !val) return nullptr;
+        size_t row_count = matrix->getRowCount();
+        size_t col_count = matrix->getColCount();
+        float* col = dataCitemAllocator::allocate(row_count, sizeof(float));
+        for(size_t i = 0; i < row_count; i++){
+            col[i] = val[i][column];
+            // replace the data with rest of column.
+            for(size_t j = column; j < col_count - 1 ; j++){
+                val[i][j] = val[i][j+ 1];
+            }
+        }
+        matrix->setColCount(--col_count);
+        return col;
+    }
+
+
 }
 
 

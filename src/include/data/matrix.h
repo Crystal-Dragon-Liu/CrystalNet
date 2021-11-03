@@ -75,7 +75,7 @@ namespace MatrixFunc{
                 @param  scale is the factor implemented on each element.
         */
         extern void     scaleMatrix(Matrix*m , float scale = 1.0);
-        //TODO matrix_topk_accuracy
+
         /*
                 @brief  provide a method add the each of element of srcMatrix to dstMatrix.
                 @param  srcMatrix source matrix.
@@ -83,10 +83,17 @@ namespace MatrixFunc{
         */
         extern void     matrixAddMatrix(Matrix* srcMatrix, Matrix* dstMatrix);
 
+        /*
+                @brief  delete a column from matrix.
+                @param  matrix: the matrix which would be modified.
+                @param  column: the index of column.the column of data with this index 
+                        would be removed logically.
+        */
+        extern float*   popColumn(Matrix* matrix, size_t column);
         //TODO hold_out_matrix
-        //TODO pop_column
         //TODO csv_to_matrix
         //TODO matrix_to_csv
+        //TODO matrix_topk_accuracy
       
 }
 
