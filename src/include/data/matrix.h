@@ -65,6 +65,14 @@ namespace MatrixFunc{
 
         // TODO resize Matrix.
         extern void     resizeMatrix(Matrix* m, size_t size);
+
+        //TODO scale_matrix
+        //TODO matrix_topk_accuracy
+        //TODO matrix_add_matrix
+        //TODO hold_out_matrix
+        //TODO pop_column
+        //TODO csv_to_matrix
+        //TODO matrix_to_csv
       
 }
 
