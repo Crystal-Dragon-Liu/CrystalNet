@@ -1,5 +1,6 @@
 #include "include/data/matrix.h"
 #include "memory.h"
+#include "assert.h"
 
 /*
     @brief  the method under MatrixFunc namespace provide the general operation,
@@ -62,6 +63,29 @@ namespace MatrixFunc{
         }
         m->setRowCount(size);
         return;
+    }
+
+    void     scaleMatrix(Matrix*m , float scale){
+        if(!m) return;
+        auto val = m->getData();
+        if(!val) return;
+        for(size_t i = 0; i < m->getRowCount(); i++){
+            for(size_t j = 0; j < m->getColCount(); j++){
+                val[i][j] = val[i][j] * scale;}
+        }
+    }
+
+    void     matrixAddMatrix(Matrix* srcMatrix, Matrix* dstMatrix){
+        assert(srcMatrix->getRowCount() == dstMatrix->getRowCount() ||
+            srcMatrix->getColCount() == dstMatrix->getColCount());
+        auto srcData =  srcMatrix->getData();
+        auto dstData =  dstMatrix->getData();
+        if(!srcData || !dstData) return;
+        for(size_t i = 0; i < srcMatrix->getRowCount(); i++){
+            for(size_t j = 0; j < srcMatrix->getColCount(); j++){
+                dstData[i][j] += srcData[i][j];
+            }
+        }
     }
 
 }

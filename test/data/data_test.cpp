@@ -43,6 +43,10 @@ TEST(BasicListTest, Test2)
 	}
 	Matrix* matrix_2 = new Matrix(5, 5);
 	*matrix_2 = *matrix;
+	float scale = 2.0;
+	MatrixFunc::scaleMatrix(matrix_2, scale);
+	MatrixFunc::printMatrix(*matrix);
+	MatrixFunc::matrixAddMatrix(matrix, matrix_2);
 	MatrixFunc::printMatrix(*matrix_2);
 	delete matrix;
 	delete matrix_2;

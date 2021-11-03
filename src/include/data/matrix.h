@@ -63,12 +63,26 @@ namespace MatrixFunc{
         */
         extern void     printMatrix(const Matrix& matrix);
 
-        // TODO resize Matrix.
+        /*
+                @brief  resize the row count of matrix.
+                @param  size: the new size of row.
+                @param  m:    matrix data.
+        */
         extern void     resizeMatrix(Matrix* m, size_t size);
 
-        //TODO scale_matrix
+        /*      @brief  implement a scale on each element of Matrix.
+                @param  m is the matrix.
+                @param  scale is the factor implemented on each element.
+        */
+        extern void     scaleMatrix(Matrix*m , float scale = 1.0);
         //TODO matrix_topk_accuracy
-        //TODO matrix_add_matrix
+        /*
+                @brief  provide a method add the each of element of srcMatrix to dstMatrix.
+                @param  srcMatrix source matrix.
+                @param  dstMatrix target matrix which would be  changed.
+        */
+        extern void     matrixAddMatrix(Matrix* srcMatrix, Matrix* dstMatrix);
+
         //TODO hold_out_matrix
         //TODO pop_column
         //TODO csv_to_matrix
