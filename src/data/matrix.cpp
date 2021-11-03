@@ -43,11 +43,24 @@ namespace MatrixFunc{
         printf("__|\n");
     }
 
+    // ? no idea what this method is about to, it would only change its row count?
     void     resizeMatrix(Matrix* m, size_t size){
         if(m->getRowCount() == size) return;
         auto val    =   m->getData();
+        if(m->getRowCount() < size){
         // TODO replace the code below with NetSimpleAlloc::deallocate()...
         val = dataC2DAllocator::reallocate(val, size*sizeof(float*));
+        for(size_t i = m->getRowCount(); i < size; i++){
+            // calloc data with new row.
+            val[i]  =   dataCitemAllocator::allocate(m->getColCount(), sizeof(float));}
+        }
+        else if(m->getRowCount() > size){
+            for(size_t i = size; i < m->getRowCount();i++){
+                dataCitemAllocator::deallocate(val[i]);
+            }
+            val     =   dataC2DAllocator::reallocate(val, size* sizeof(float*));
+        }
+        m->setRowCount(size);
         return;
     }
 

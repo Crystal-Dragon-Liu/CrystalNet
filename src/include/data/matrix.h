@@ -25,6 +25,8 @@ public:
         float** getData() const { return data_; }
         size_t  getRowCount() const {return row_count_;}
         size_t  getColCount() const {return col_count_;}
+        void    setRowCount(size_t row_count) {row_count_ = row_count;}
+        void    setColCount(size_t col_count) {col_count_ = col_count;}
         Matrix& operator=(Matrix& data);
         // maybe the data is dangerous, but i don care. :)
 private:
