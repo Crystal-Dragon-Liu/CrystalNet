@@ -106,6 +106,30 @@ namespace MatrixFunc{
         return col;
     }
 
+    Matrix  holdOutMatrix(Matrix* matrix, size_t m){
+        auto val = matrix->getData();
+        Matrix h;
+        size_t row_count = matrix->getRowCount();
+        size_t col_count  = matrix->getColCount();
+        if(m >= matrix->getRowCount() || !val)
+            return h;
+        h.setColCount(col_count);
+        h.setRowCount(m);
+        auto hVal = dataC2DAllocator::allocate(m, sizeof(float*));
+        for(size_t i = 0; i < m;i++){
+            // get a random row count.
+            size_t index = rand() % matrix->getRowCount();
+            hVal[i] = val[index];
+            val[index] = val[--row_count]; // ??? why?????
+        }
+        // TODO assignment for h.data_ by hVal.
+        
+        // create a new Matrix.
+        return h;
+
+    }
+
+
 
 }
 

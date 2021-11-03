@@ -28,11 +28,16 @@ public:
         void    setRowCount(size_t row_count) {row_count_ = row_count;}
         void    setColCount(size_t col_count) {col_count_ = col_count;}
         Matrix& operator=(Matrix& data);
+        // Shallow-copy constructor may be enough.
+        Matrix(const Matrix& matrix){
+                row_count_ = matrix.getRowCount();
+                col_count_ = matrix.getColCount();
+                data_      = matrix.getData();
+        }
         // maybe the data is dangerous, but i don care. :)
 private:
         /* maybe copy constructor should be forbidden. */
         float** data_;
-        Matrix(const Matrix& matrix){}
         size_t  row_count_;
         size_t  col_count_;
 };
@@ -91,9 +96,12 @@ namespace MatrixFunc{
         */
         extern float*   popColumn(Matrix* matrix, size_t column);
         //TODO hold_out_matrix
+        extern Matrix   holdOutMatrix(Matrix* matrix, size_t m);
+
         //TODO csv_to_matrix
         //TODO matrix_to_csv
         //TODO matrix_topk_accuracy
+
       
 }
 
