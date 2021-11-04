@@ -25,6 +25,10 @@ namespace MatrixFunc{
     void printMatrix(const Matrix& matrix){
         // awesome function.....!
         auto data = matrix.getData();
+        if(matrix.getColCount() == 0 || matrix.getRowCount() == 0) {
+            std::cout << "Matrix: [" << matrix.getRowCount() << ", " << matrix.getColCount() << "]" << std::endl;
+            return;
+        }
         std::cout << "Matrix: [" << matrix.getRowCount() << ", " << matrix.getColCount() << "]" << std::endl;
         printf(" __");
         for(size_t j = 0; j < 16 *matrix.getColCount()-1; ++j) printf(" ");
@@ -88,6 +92,7 @@ namespace MatrixFunc{
         }
     }
 
+    //! this function has not been tested.
     float*     popColumn(Matrix* matrix, size_t column){
         //generate a new column to store the popped column.
         auto val = matrix->getData();
@@ -106,27 +111,33 @@ namespace MatrixFunc{
         return col;
     }
 
-    Matrix  holdOutMatrix(Matrix* matrix, size_t m){
-        auto val = matrix->getData();
-        Matrix h;
-        size_t row_count = matrix->getRowCount();
-        size_t col_count  = matrix->getColCount();
-        if(m >= matrix->getRowCount() || !val)
-            return h;
-        h.setColCount(col_count);
-        h.setRowCount(m);
+    void  initMatrix(Matrix* matrix, size_t row, size_t col, float** RawData){
+        matrix->setRawData(RawData);
+        matrix->setColCount(col);
+        matrix->setRowCount(row);
+        // ref count would be initialized with 0 by default.
+    }
+
+
+    void  holdOutMatrix(Matrix* dstMatrix, Matrix* srcMatrix, size_t m){
+        auto val = srcMatrix->getData();
+        size_t row_count = srcMatrix->getRowCount();
+        size_t col_count  = srcMatrix->getColCount();
+        if(m >= row_count || !val)
+            return;
         auto hVal = dataC2DAllocator::allocate(m, sizeof(float*));
         for(size_t i = 0; i < m;i++){
             // get a random row count.
-            size_t index = rand() % matrix->getRowCount();
+            size_t index = rand() % row_count;
             hVal[i] = val[index];
-            val[index] = val[--row_count]; // ??? why?????
+            // val[index] = val[--row_count]; // ??? why?????
         }
         // TODO assignment for h.data_ by hVal.
-        
-        // create a new Matrix.
-        return h;
-
+        // if dstMatrix is not a empty matrix, free it.
+        if(!dstMatrix->getData() && dstMatrix->getRowCount() != 0)
+             MatrixFunc::freeRawData(dstMatrix->getData(), dstMatrix->getRowCount()); 
+        MatrixFunc::initMatrix(dstMatrix, m, col_count, hVal);
+        dstMatrix->setRefCount(1);
     }
 
 
@@ -137,14 +148,20 @@ namespace MatrixFunc{
 
 /* implement all the member function of class Matrix. */
 
-Matrix::Matrix(): row_count_(0), col_count_(0), data_(nullptr){}
-Matrix::~Matrix(){MatrixFunc::freeRawData(data_, row_count_);}
+Matrix::Matrix(): row_count_(0), col_count_(0), data_(nullptr), ref_count_(0){}
+Matrix::~Matrix(){
+    if(ref_count_ == 0)
+        MatrixFunc::freeRawData(data_, row_count_);
+    else
+        dataC2DAllocator::deallocate(data_);
+    }
 
 Matrix::Matrix(size_t rows, size_t cols){
     row_count_      =   rows;
     col_count_      =   cols;
     float** rawData =   MatrixFunc::make2DArray(row_count_, col_count_);
-    this->data_  =   rawData;   
+    this->data_     =   rawData;
+    this->ref_count_=   0; 
 }
 
 Matrix& Matrix::operator=(Matrix& data){
@@ -157,6 +174,7 @@ Matrix& Matrix::operator=(Matrix& data){
     for(size_t i = 0; i < data.row_count_; i++){
         memcpy(data_[i], otherData[i], data.getColCount()*sizeof(float));}
     MatrixFunc::freeRawData(rawdataTemp, row_count_);
+    row_count_ = 0;
     return *this;
 }
 

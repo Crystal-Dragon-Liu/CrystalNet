@@ -15,18 +15,31 @@ class  Matrix{
 public:
         /*      @brief create a new Matrix without rawdata. */
         Matrix();
+        
         /*
                 @brief  create a new Matrix with size(rows, cols)
                 @param  rows: row counts.
                 @param  cols: column counts.
         */
         Matrix(size_t rows, size_t cols);
+
+        /*
+                @brief  free all the data by manual
+                        if the data is borrowed from others matrix obj.
+                        the data column should NOT be deleted. all we need to do is 
+                        to free the ptr array (data_) in that when we copy a 2d array.
+                        we just create a ptr array without the assignment operation for 
+                        the corrosponding column.
+        */
         virtual ~Matrix();
         float** getData() const { return data_; }
         size_t  getRowCount() const {return row_count_;}
         size_t  getColCount() const {return col_count_;}
         void    setRowCount(size_t row_count) {row_count_ = row_count;}
         void    setColCount(size_t col_count) {col_count_ = col_count;}
+        void    setRawData(float** data) {data_ = data;}
+        void    setRefCount(size_t refCount) {ref_count_ = refCount;}
+        size_t  getRefCount() const {return ref_count_;}
         Matrix& operator=(Matrix& data);
         // Shallow-copy constructor may be enough.
         Matrix(const Matrix& matrix){
@@ -40,6 +53,7 @@ private:
         float** data_;
         size_t  row_count_;
         size_t  col_count_;
+        size_t  ref_count_;
 };
 
 
@@ -96,7 +110,9 @@ namespace MatrixFunc{
         */
         extern float*   popColumn(Matrix* matrix, size_t column);
         //TODO hold_out_matrix
-        extern Matrix   holdOutMatrix(Matrix* matrix, size_t m);
+        extern void     holdOutMatrix(Matrix* dstMatrix, Matrix* srcMatrix, size_t m);
+
+        extern void     initMatrix(Matrix* matrix, size_t row, size_t col, float** RawData);
 
         //TODO csv_to_matrix
         //TODO matrix_to_csv
