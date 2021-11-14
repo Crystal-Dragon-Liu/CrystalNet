@@ -6,12 +6,40 @@
 */
 class Image{
 public:
-    Image():width_(0), height_(0), data_(nullptr){}
-    //TODO implement a correct process.
-    ~Image(){}
+    Image():w_(0), h_(0), c_(0), data_(nullptr){}
+    Image(size_t w, size_t h, size_t c):w_(w), h_(h), c_(c), data_(nullptr){}
+
+    //TODO implement a correct process. no idea about the ref_count.
+    ~Image();
+    /*
+        @brief  set data for empty Image obj.
+                this method should check whether the data_ is empty or not.
+                if it's not set to empty, the data stored in the Image obj 
+                should be removed.
+    */
+    void setData(float* data, size_t w, size_t h, size_t c);
+    
+    //TODO implement Image& Image::operator=(Image& data)
+    
+
+    size_t getWidth() const {return w_;}
+    size_t getHeight() const {return h_;}
+    size_t getChannels() const {return c_;}
+    float* getData() const { return data_; }
+
 private:
-    size_t width_;
-    size_t height_;
+    /*
+        @brief swallow copy which may be not good enough. 
+    */
+    Image(const Image& image){
+                w_ = image.getWidth();
+                h_ = image.getHeight();
+                c_ = image.getChannels();
+                data_ = image.getData();
+    }
+    size_t w_;
+    size_t h_;
+    size_t c_;
     float* data_;
 };
 
@@ -34,6 +62,11 @@ namespace ImageFunc{
         @brief  free image data.
     */
     extern void   freeImage(Image* data);
+
+    /*
+        @brief create cache for Image.
+    */
+    extern Image* makeImage(size_t w, size_t h, size_t c);
 
     /*
         @brief resize image input, and create a new image with size (w, h)

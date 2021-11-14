@@ -4,6 +4,7 @@
 #include "include/Utils/list.h"
 #include "include/Utils/config_list.h"
 #include "include/data/matrix.h"
+#include "include/data/image.h"
 
 Matrix* initMatrixWithValue(size_t row, size_t col, float value){
 	Matrix* matrix = new Matrix(row, col);

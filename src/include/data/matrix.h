@@ -2,10 +2,6 @@
 #define MATRIX_H
 #include "include/Utils/common.h"
 using namespace MyAllocFunc;
-typedef NetSimpleAlloc<float, MyNetAlloc> dataItemAllocator; // define a allocator.
-typedef NetSimpleAlloc<float*, MyNetAlloc> data2DAllocator;
-typedef NetSimpleAlloc<float,  MyNetCAlloc> dataCitemAllocator;
-typedef NetSimpleAlloc<float*, MyNetCAlloc> dataC2DAllocator;
 
 
 /*
