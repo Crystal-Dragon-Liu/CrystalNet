@@ -89,10 +89,14 @@ TEST(BasicListTest, DISABLED_Test3){
 	Test List:
 	1. Create a image.
 	2. Free image created from 1.
+	3. try to load a image and return a image obj.
 */
 TEST(BasicListTest, Test4){
 	Image* image = ImageFunc::makeImage(2, 2, 2);
 	ImageFunc::freeImage(image);
+	const std::string image_path("/root/test_data/figure_test.png");
+	Image* new_image = ImageFunc::_loadImage(image_path.data(), 3);
+	ImageFunc::freeImage(new_image);
 	// Image* image = nullptr;
 	// resizeImage(image, 2, 2);
 	// Image* image = new Image(2, 2, 2);

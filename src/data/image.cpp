@@ -68,25 +68,34 @@ namespace ImageFunc{
             std::cerr << "Cannot load image" << fileName << stbi_failure_reason() << std::endl;
             exit(0);   
         }
+        std::cout << "image loaded with size [" << w << ", " << h << ", " << c << "]" << std::endl;
+        Image* new_image = ImageFunc::makeImage(w, h, c);
+        auto new_image_data = new_image->getData();
+        // switch the position of pixel.
+        for(size_t k = 0; k < c; k++){
+            for(size_t j = 0; j < h; j++){
+                for(size_t i = 0; i < w; i++){
+                    size_t dst_index = i + w*j + w*h*k;
+                    size_t src_index = k + c*i + c*w*j;
+                    new_image_data[dst_index] = static_cast<float>(data[src_index])/255.;
+                    // new_image.data[dst_index] = (float)data[src_index]/255.;
+                }
+            }
+        }
         free(data);
-        return nullptr;
+        return new_image;
     }
      
-    //TODO free the space of Image.
     void   freeImage(Image* image){
         delete image;
     }
 
-    //TODO create cache for image.
     Image* makeImage(size_t w, size_t h, size_t c){
         Image* image = new Image(w, h, c); // with nullptr to image data.
         return image;
     }
 
-    Image* resizeImage(Image* og_data, size_t w, size_t h)
-    {
-        return nullptr;
-    }
+    Image* resizeImage(Image* og_data, size_t w, size_t h){return nullptr;}
 
     void   freeRawData(float* data){
         dataCitemAllocator::deallocate(data);
