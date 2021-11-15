@@ -5,7 +5,7 @@
 #include "include/Utils/config_list.h"
 #include "include/data/matrix.h"
 #include "include/data/image.h"
-
+using namespace ImageFunc;
 Matrix* initMatrixWithValue(size_t row, size_t col, float value){
 	Matrix* matrix = new Matrix(row, col);
 	auto data = matrix->getData();
@@ -73,7 +73,7 @@ TEST(BasicListTest, DISABLED_Test2)
 	2. create a matrix with index 2 which are sampled from matrix 1.
 	3. free them correctly.
 */
-TEST(BasicListTest, Test3){
+TEST(BasicListTest, DISABLED_Test3){
 	Matrix* matrix_1 	=	initMatrixWithValue(5, 5, 1);
 	Matrix* matrix_2 	= new Matrix;
 	MatrixFunc::holdOutMatrix(matrix_2, matrix_1, 3);
@@ -83,4 +83,18 @@ TEST(BasicListTest, Test3){
 	MatrixFunc::printMatrix(*matrix_2);
 	delete matrix_1;
 	delete matrix_2;
+}
+
+/*
+	Test List:
+	1. Create a image.
+	2. Free image created from 1.
+*/
+TEST(BasicListTest, Test4){
+	Image* image = ImageFunc::makeImage(2, 2, 2);
+	ImageFunc::freeImage(image);
+	// Image* image = nullptr;
+	// resizeImage(image, 2, 2);
+	// Image* image = new Image(2, 2, 2);
+	// delete image;
 }

@@ -1,13 +1,14 @@
 #ifndef IMAGE_H
 #define IMAGE_H
-
+#include "include/Utils/common.h"
 /*
     @brief maintain a Image class contains the width, height, channels and data.
 */
 class Image{
 public:
     Image():w_(0), h_(0), c_(0), data_(nullptr){}
-    Image(size_t w, size_t h, size_t c):w_(w), h_(h), c_(c), data_(nullptr){}
+
+    Image(size_t w, size_t h, size_t c);
 
     //TODO implement a correct process. no idea about the ref_count.
     ~Image();
@@ -26,6 +27,10 @@ public:
     size_t getHeight() const {return h_;}
     size_t getChannels() const {return c_;}
     float* getData() const { return data_; }
+    /*
+        @brief  deep copy.
+    */
+    Image& operator=(Image& data);
 
 private:
     /*
@@ -44,6 +49,7 @@ private:
 };
 
 namespace ImageFunc{
+
     /*
         @brief  load a image from filename expected.
         @param filename:    file path.
@@ -62,6 +68,10 @@ namespace ImageFunc{
         @brief  free image data.
     */
     extern void   freeImage(Image* data);
+
+    extern void   freeRawData(float*);
+
+    extern float* makeRawData(size_t len);
 
     /*
         @brief create cache for Image.
