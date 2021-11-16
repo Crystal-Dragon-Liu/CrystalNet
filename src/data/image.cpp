@@ -57,7 +57,17 @@ Image& Image::operator=(Image& image){
 
 namespace ImageFunc{
 
-    Image* loadImage(const char* fileName, size_t w, size_t h, size_t channel){return nullptr;}
+    Image* loadImage(const char* fileName, size_t w, size_t h, size_t channel){
+        Image* out = _loadImage(fileName, channel);
+        if((h && w) && (out->getHeight() != h && out->getWidth() != w)){
+            // TODO resize the image.
+            Image* data = resizeImage(out, w, h);
+            // TODO delete the data stored in out.
+            freeImage(out);
+            out = data;
+        }
+        return out; //TODO return the result but not out.
+    }
 
     Image* _loadImage(const char* fileName, size_t channels)
     {
@@ -95,7 +105,9 @@ namespace ImageFunc{
         return image;
     }
 
-    Image* resizeImage(Image* og_data, size_t w, size_t h){return nullptr;}
+    Image* resizeImage(Image* og_data, size_t w, size_t h){
+        return nullptr;
+    }
 
     void   freeRawData(float* data){
         dataCitemAllocator::deallocate(data);
