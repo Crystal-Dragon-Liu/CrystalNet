@@ -27,6 +27,9 @@ public:
     size_t getHeight() const {return h_;}
     size_t getChannels() const {return c_;}
     float* getData() const { return data_; }
+    
+    float  getPixel(size_t w, size_t h, size_t c) const;
+
     /*
         @brief  deep copy.
     */

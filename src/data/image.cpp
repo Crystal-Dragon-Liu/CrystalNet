@@ -54,6 +54,17 @@ Image& Image::operator=(Image& image){
     return *this;
 }
 
+/*
+    @brief get pixel with width, height, channel expected.
+           w stands for the nums of columns.
+           h means the nums of rows.
+*/
+float  Image::getPixel(size_t w, size_t h, size_t c) const{
+    assert(w < w_ && h < h_ && c < c_);
+    return data_[c*h_*w_ + h*w_ + w];
+}
+
+
 
 namespace ImageFunc{
 
@@ -106,6 +117,24 @@ namespace ImageFunc{
     }
 
     Image* resizeImage(Image* og_data, size_t w, size_t h){
+        size_t c_o = og_data->getChannels();
+        size_t h_o = og_data->getHeight();
+        size_t w_o = og_data->getWidth();
+        Image* resized = makeImage(w, h, c_o);
+        Image* temp = makeImage(w, h_o, c_o);
+        float w_scale = static_cast<float>(w_o - 1) / (w-1);
+        float h_scale = static_cast<float>(h_o - 1) / (h-1);
+        for(size_t k = 0; k < c_o; k++){
+            for(size_t r = 0; r < h_o; r++){
+                for(size_t c = 0; c < w; c++){
+                    // TODO calculate the resized data.
+                    float val = 0;
+                    if(c == w - 1 || w_o == 1){
+                        val = og_data->getPixel(w_o - 1, r, k);
+                    }
+                }
+            }
+        }
         return nullptr;
     }
 
