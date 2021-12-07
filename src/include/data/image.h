@@ -29,6 +29,9 @@ public:
     float* getData() const { return data_; }
     
     float  getPixel(size_t w, size_t h, size_t c) const;
+    void   setPixel(float val, size_t w, size_t h, size_t c);
+	void   addPixel(float val, size_t w, size_t h, size_t c);
+
 
     /*
         @brief  deep copy.
@@ -85,6 +88,9 @@ namespace ImageFunc{
         @brief resize image input, and create a new image with size (w, h)
     */
     extern Image* resizeImage(Image* og_data, size_t w, size_t h);
+
+    /* @brief print the size of image. */
+    extern void   printShape(Image* data);
 
 }
 

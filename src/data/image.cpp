@@ -64,9 +64,23 @@ float  Image::getPixel(size_t w, size_t h, size_t c) const{
     return data_[c*h_*w_ + h*w_ + w];
 }
 
+void   Image::setPixel(float val, size_t w, size_t h, size_t c) {
+	assert(w < w_ && h < h_ && c < c_);
+	data_[c*h_*w_ + h * w_ + w] = val;
+}
+
+void   Image::addPixel(float val, size_t w, size_t h, size_t c) {
+	assert(w < w_ && h < h_ && c < c_);
+	data_[c*h_*w_ + h * w_ + w] = data_[c*h_*w_ + h * w_ + w] + val;
+}
 
 
 namespace ImageFunc{
+
+    void   printShape(Image* data){
+        if(!data) std::cout << "<invalid image data...>" << std::endl;
+        std::cout << "image loaded with size [" << data->getWidth() << ", " << data->getHeight() << ", " << data->getChannels() << "]" << std::endl;
+    }
 
     Image* loadImage(const char* fileName, size_t w, size_t h, size_t channel){
         Image* out = _loadImage(fileName, channel);
@@ -89,8 +103,8 @@ namespace ImageFunc{
             std::cerr << "Cannot load image" << fileName << stbi_failure_reason() << std::endl;
             exit(0);   
         }
-        std::cout << "image loaded with size [" << w << ", " << h << ", " << c << "]" << std::endl;
         Image* new_image = ImageFunc::makeImage(w, h, c);
+        printShape(new_image);
         auto new_image_data = new_image->getData();
         // switch the position of pixel.
         for(size_t k = 0; k < c; k++){
@@ -117,11 +131,13 @@ namespace ImageFunc{
     }
 
     Image* resizeImage(Image* og_data, size_t w, size_t h){
-        size_t c_o = og_data->getChannels();
+               size_t c_o = og_data->getChannels();
         size_t h_o = og_data->getHeight();
         size_t w_o = og_data->getWidth();
         Image* resized = makeImage(w, h, c_o);
         Image* temp = makeImage(w, h_o, c_o);
+		// calculate the scale of width and height without considering the boundary of image,
+		// in that the edge of image should be reserved.
         float w_scale = static_cast<float>(w_o - 1) / (w-1);
         float h_scale = static_cast<float>(h_o - 1) / (h-1);
         for(size_t k = 0; k < c_o; k++){
@@ -130,12 +146,38 @@ namespace ImageFunc{
                     // TODO calculate the resized data.
                     float val = 0;
                     if(c == w - 1 || w_o == 1){
-                        val = og_data->getPixel(w_o - 1, r, k);
+                        val = og_data->getPixel(w_o - 1, r, k); // assignment the right edge of pixels for new image.
                     }
+					else {
+						float sx = c * w_scale;
+						int ix = static_cast<int>(sx);
+						float dx = sx - ix;
+						val = (1 - dx) * og_data->getPixel(ix, r, k) + dx * og_data->getPixel(ix+1, r, k);
+					}
+					temp->setPixel(val, c, r, k);
                 }
             }
         }
-        return nullptr;
+		
+		// step 2, interpolation for y axis.
+		for (size_t k = 0; k < c_o; ++k) {
+			for (size_t r = 0; r < h; ++r) {
+				float sy = r * h_scale;
+				int iy = static_cast<int>(sy);
+				float dy = sy - iy;
+				for (size_t c = 0; c < w; ++c) {
+					float val = (1 - dy)* temp->getPixel(c, iy, k);
+					resized->setPixel(val, c, r, k);
+				}
+				if (r == h - 1 || h_o == 1) continue;
+				for (size_t c = 0; c < w; ++c) {
+					float val = dy * temp->getPixel(c, iy + 1, k);
+					resized->addPixel(val, c, r, k);
+				}
+			}
+		}
+		ImageFunc::freeImage(temp);
+		return resized; //! dont forget to delete it.
     }
 
     void   freeRawData(float* data){
@@ -147,7 +189,6 @@ namespace ImageFunc{
         auto data = dataCitemAllocator::allocate(len, sizeof(float));
         return data;
     }
-
 }
 
 

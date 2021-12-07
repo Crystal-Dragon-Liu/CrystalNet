@@ -90,15 +90,23 @@ TEST(BasicListTest, DISABLED_Test3){
 	1. Create a image.
 	2. Free image created from 1.
 	3. try to load a image and return a image obj.
+	4. resize the loaded image.
+	5. call the loadImage, and free the image returned.
 */
 TEST(BasicListTest, Test4){
+	// test 1
 	Image* image = ImageFunc::makeImage(2, 2, 2);
-	ImageFunc::freeImage(image);
+	// test 2
+	ImageFunc::freeImage(image);	
 	const std::string image_path("/root/test_data/figure_test.png");
-	Image* new_image = ImageFunc::_loadImage(image_path.data(), 3);
+	// test 3
+	Image* new_image = ImageFunc::_loadImage(image_path.data(), 3);	
+	// test 4
+	Image* resized_image = ImageFunc::resizeImage(new_image, 64, 64);	
 	ImageFunc::freeImage(new_image);
-	// Image* image = nullptr;
-	// resizeImage(image, 2, 2);
-	// Image* image = new Image(2, 2, 2);
-	// delete image;
+	std::cout << "image loaded with size [" << resized_image->getWidth() << ", " << resized_image->getHeight() << ", " << resized_image->getChannels() << "]" << std::endl;
+	ImageFunc::freeImage(resized_image);
+	// test 5
+	new_image = ImageFunc::loadImage(image_path.data(), 64, 64, 3);
+	ImageFunc::freeImage(new_image);
 }
