@@ -80,6 +80,17 @@ namespace ConfigIO{
     */
     extern char*  configFind(NodeList* l, char* key);
 
+    /* @brief   load the network struct */
+    template<class NetAlloc=MyNetAlloc>
+    extern NodeList* readModelConfig(const char* fileName){
+        std::ifstream dataFile(fileName);
+        std::string line;
+        int row_num = 0;
+        NodeList* sections = NodeOP::makeNodeList<NetAlloc>();
+        //TODO continue to read .cfg files.
+        return nullptr;
+    }
+
 }
 
 
