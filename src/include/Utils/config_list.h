@@ -11,6 +11,17 @@
 using namespace MyAllocFunc;
 /* no idea if it should be removed. */
 
+/*
+	@brief	section of configuration involving hypeparameters and networks,
+			the first Node in config is set to the hypeparameters with network configuration followed.
+			type: type of configuration {net/network, maxpool, convolutional}
+			config: list of config for network or hypeparamters
+*/
+struct ConfigSection{
+	char* type;
+	NodeList* config;
+};
+typedef NetSimpleAlloc<ConfigSection, MyNetAlloc> SectionAllocator;
 
 namespace ConfigIO{
 
@@ -74,22 +85,52 @@ namespace ConfigIO{
         return list;
     }
 
+    /* @brief   load the network struct */
+    template<class NetAlloc=MyNetAlloc>
+    NodeList* readModelConfig(const char* fileName){
+        std::ifstream dataFile(fileName);
+        std::string line;
+        int row_num = 0;
+        NodeList* sections = NodeOP::makeNodeList<NetAlloc>();
+        // current section
+        ConfigSection* current = nullptr;
+        //TODO continue to read .cfg files.
+        while(getline(dataFile, line)){
+            row_num++;
+            int len = line.size();
+            if(len == 0 || line[0] == '\0' || line[0] == '#' || line[0] == ';') continue;
+            UtilFunc::stripUselessChr(line);
+            switch (line[0])
+            {
+            case '[':
+                //TODO allocate space for struct Section.
+                // current = NetAlloc::allocate(sizeof(ConfigSection));
+                // current = SectionAllocator::allocate(sizeof(ConfigSection));
+                current = SectionAllocator::allocate();
+                NodeOP::insertNode(sections, current);
+                current->config = NodeOP::makeNodeList<NetAlloc>();
+                current->type = line.data();
+                //TODO insert current node to sections.
+                //TODO initialize current node, including its type and options.
+                break;
+            default:
+                if(!readConfig(line, current->config)){
+                    std::cout << "failed to parse config file. line : " << row_num << std::endl;
+                }
+                break;
+            }
+        }
+        dataFile.close();
+        return sections;
+    }
+
+
+
     //TODO find item of configuration from nodelist.
     /*
         @brief  find value according to the key expected from NodeList.
     */
     extern char*  configFind(NodeList* l, char* key);
-
-    /* @brief   load the network struct */
-    template<class NetAlloc=MyNetAlloc>
-    extern NodeList* readModelConfig(const char* fileName){
-        std::ifstream dataFile(fileName);
-        std::string line;
-        int row_num = 0;
-        NodeList* sections = NodeOP::makeNodeList<NetAlloc>();
-        //TODO continue to read .cfg files.
-        return nullptr;
-    }
 
 }
 

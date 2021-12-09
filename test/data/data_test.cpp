@@ -93,7 +93,7 @@ TEST(BasicListTest, DISABLED_Test3){
 	4. resize the loaded image.
 	5. call the loadImage, and free the image returned.
 */
-TEST(BasicListTest, Test4){
+TEST(BasicListTest, DISABLED_Test4){
 	// test 1
 	Image* image = ImageFunc::makeImage(2, 2, 2);
 	// test 2
@@ -109,4 +109,17 @@ TEST(BasicListTest, Test4){
 	// test 5
 	new_image = ImageFunc::loadImage(image_path.data(), 64, 64, 3);
 	ImageFunc::freeImage(new_image);
+}
+
+
+/*
+	Test list:
+	1. Create a NodeList to store the network configuration.
+	2. free this NodeList.
+*/
+TEST(BasicListTest, Test5){
+	std::string filename("/root/test_data/yolo.cfg");
+	// NodeList* list = ConfigIO::readDataAndCfg(filename);
+	NodeList* list = ConfigIO::readModelConfig(filename.data());
+	NodeOP::freeNodeList(list);
 }
