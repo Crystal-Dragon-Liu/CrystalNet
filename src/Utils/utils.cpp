@@ -1,6 +1,7 @@
 #include "include/Utils/utils.h"
 #include <iostream>
 #include "include/Utils/common.h"
+#include "include/Utils/config_list.h"
 namespace UtilFunc
 {
 
@@ -62,5 +63,16 @@ namespace UtilFunc
 		}
         else{__DETECT_BAD_ALLOC;}
     }
+
+    void freeConfigSection(void* data){
+        //TODO free the type of item.
+        ConfigSection* section = reinterpret_cast<ConfigSection*>(data);
+        if(section->type != nullptr)
+            free(section->type);
+        //TODO traverse the node 
+        return;
+    }
+    void freeNothing(void* data){return;}
+
 
 }

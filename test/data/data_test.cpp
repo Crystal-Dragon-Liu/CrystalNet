@@ -120,6 +120,13 @@ TEST(BasicListTest, DISABLED_Test4){
 TEST(BasicListTest, Test5){
 	std::string filename("/root/test_data/yolo.cfg");
 	// NodeList* list = ConfigIO::readDataAndCfg(filename);
-	NodeList* list = ConfigIO::readModelConfig(filename.data());
-	NodeOP::freeNodeList(list);
+	// NodeList* list = ConfigIO::readModelConfig(filename.data());
+	// NodeOP::freeNodeList(list);
+	std::string test_str("12345");
+	typedef NetSimpleAlloc<char, MyNetAlloc> charAllocator;
+	char* val   =   charAllocator::allocate(6); //配置空间时，要加一个元素
+	UtilFunc::copyCharArray(val, test_str);
+	UtilFunc::printCharArray(val);
+	std::cout << std::endl;
+	free(val);
 }

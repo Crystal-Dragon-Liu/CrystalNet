@@ -21,6 +21,7 @@ struct ConfigSection{
 	char* type;
 	NodeList* config;
 };
+
 typedef NetSimpleAlloc<ConfigSection, MyNetAlloc> SectionAllocator;
 
 namespace ConfigIO{
@@ -109,7 +110,7 @@ namespace ConfigIO{
                 current = SectionAllocator::allocate();
                 NodeOP::insertNode(sections, current);
                 current->config = NodeOP::makeNodeList<NetAlloc>();
-                current->type = line.data();
+                current->type = nullptr;
                 //TODO insert current node to sections.
                 //TODO initialize current node, including its type and options.
                 break;

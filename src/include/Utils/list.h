@@ -24,11 +24,6 @@ struct	NodeList{
 };
 
 
-
-
-
-
-
 namespace NodeOP
 {
 	template<class NetAlloc=MyNetAlloc>
@@ -76,9 +71,11 @@ namespace NodeOP
 		}
 	}
 
-	/* @brief	delete NodeList. a deleter is needed.*/
+	/* @brief	delete NodeList. a deleter is needed.
+				if no deleter is passed, the cache of Node would not be released.
+	*/
 	template<class NetAlloc=MyNetAlloc>
-	void freeNodeList(NodeList* nodeList, callbackDeleteValues deleteCallback = UtilFunc::freeKyp){
+	void freeNodeList(NodeList* nodeList, callbackDeleteValues deleteCallback = UtilFunc::freeNothing){
 		typedef NetSimpleAlloc<NodeList, NetAlloc> NodeListAllocator; /// define a allocator.
 		freeNode(nodeList->front_, deleteCallback); /// delete all the nodes with value_.
 		NodeListAllocator::deallocate(nodeList); /// delete nodeList obj.
