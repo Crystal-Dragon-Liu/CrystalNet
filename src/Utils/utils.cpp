@@ -53,6 +53,27 @@ namespace UtilFunc
         std::cout << std::endl;
     }
 
+    void printConfigSection(void* data){
+        ConfigSection* section = reinterpret_cast<ConfigSection*>(data);
+        //TODO display type.
+        if(section->type == nullptr){__LOG_MESSAGE__("no type detected.");}
+        else{__LOG_MESSAGE_X__(section->type);}
+        //TODO display item.
+        if(section->config == nullptr){
+            std::cout << "no data in section." << std::endl;
+            return;
+        }
+        else{
+            Node* n = section->config->front_;
+            while(n){
+                void* kvp = n->value_;
+                printkyp(kvp);
+                Node* next = n->next_;
+                n = next;
+            }
+        }
+    }
+
     void freeKyp(void* data){
         KeyValuePair* pKeyValue = reinterpret_cast<KeyValuePair*>(data);
         if(pKeyValue)
@@ -69,8 +90,21 @@ namespace UtilFunc
         ConfigSection* section = reinterpret_cast<ConfigSection*>(data);
         if(section->type != nullptr)
             free(section->type);
-        //TODO traverse the node 
-        return;
+        if(section->config == nullptr){
+            std::cout << "no data in section." << std::endl;
+        }
+        else{
+            Node* n = section->config->front_;
+            while(n){
+                void* kvp = n->value_;
+                freeKyp(kvp);
+                Node* next = n->next_;
+                free(n);
+                n = next;
+            }
+        }
+        free(section->config);
+        free(section);
     }
     void freeNothing(void* data){return;}
 

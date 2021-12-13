@@ -26,6 +26,9 @@ struct	NodeList{
 
 namespace NodeOP
 {
+	/*
+		@brief	allocate some space for NodeList.
+	*/
 	template<class NetAlloc=MyNetAlloc>
 	NodeList* makeNodeList(){
 		typedef NetSimpleAlloc<NodeList, NetAlloc> NodeListAllocator; // define a allocator.

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <iostream>
 
+#define __LOG_MESSAGE__(s) std::cout << "==========" << #s << "==========" << std::endl;
+#define __LOG_MESSAGE_X__(s) std::cout << "==========" << s << "==========" << std::endl;
 struct KeyValuePair
 {
     char* key_;

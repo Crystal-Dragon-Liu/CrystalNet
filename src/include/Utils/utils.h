@@ -9,6 +9,7 @@ namespace UtilFunc
     extern void stripUselessChr(std::string& str);
     extern void copyCharArray(char* des, const std::string& line);
     extern void printCharArray(char* data);
+    extern void printConfigSection(void* data);
     extern void printkyp(void* data);
     extern void freeKyp(void* data);
     extern void freeConfigSection(void* data);

@@ -110,9 +110,12 @@ namespace ConfigIO{
                 current = SectionAllocator::allocate();
                 NodeOP::insertNode(sections, current);
                 current->config = NodeOP::makeNodeList<NetAlloc>();
-                current->type = nullptr;
-                //TODO insert current node to sections.
-                //TODO initialize current node, including its type and options.
+                typedef NetSimpleAlloc<char, NetAlloc> NodeAllocator;
+                current->type = NodeAllocator::allocate(len + 1);
+                if(!current->type){
+                    __LOG_MESSAGE__("no space allocated for types of section.");
+                }
+                UtilFunc::copyCharArray(current->type, line);
                 break;
             default:
                 if(!readConfig(line, current->config)){
