@@ -121,6 +121,7 @@ TEST(BasicListTest, Test5){
 	std::string filename("/root/test_data/yolo.cfg");
 	// NodeList* list = ConfigIO::readDataAndCfg(filename);
 	NodeList* list = ConfigIO::readModelConfig(filename.data());
+	std::cout << "list -> size: " << list->size_ << std::endl;
 	NodeOP::printAllNodes(list, UtilFunc::printConfigSection);
 	NodeOP::freeNodeList(list, UtilFunc::freeConfigSection);
 	std::string test_str("12345");
