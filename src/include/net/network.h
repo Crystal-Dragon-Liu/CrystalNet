@@ -62,5 +62,8 @@ typedef struct Network{
     float *cost; 
 } Network;
 
+namespace NetworkOP{
+    extern Network make_network(int n);
+}
 
 #endif
