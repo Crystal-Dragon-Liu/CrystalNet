@@ -78,10 +78,13 @@ namespace MyAllocFunc{
 }
 
 using namespace MyAllocFunc;
-typedef NetSimpleAlloc<float, MyNetAlloc> dataItemAllocator; // define a allocator.
-typedef NetSimpleAlloc<float*, MyNetAlloc> data2DAllocator;
-typedef NetSimpleAlloc<float,  MyNetCAlloc> dataCitemAllocator;
-typedef NetSimpleAlloc<float*, MyNetCAlloc> dataC2DAllocator;
+typedef NetSimpleAlloc<float, MyNetAlloc>   DataItemAllocator; // define a allocator.
+typedef NetSimpleAlloc<float*, MyNetAlloc>  Data2DAllocator;
+typedef NetSimpleAlloc<float,  MyNetCAlloc> DataCitemAllocator;
+typedef NetSimpleAlloc<float*, MyNetCAlloc> DataC2DAllocator;
+typedef NetSimpleAlloc<size_t, MyNetCAlloc> SizeAllocator;
+
+
 
 // /// @brief delete the 2d array with type _Tp. make sure rowCount is matched to data.
 // template<class _Tp>

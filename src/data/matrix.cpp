@@ -10,16 +10,16 @@ namespace MatrixFunc{
 
     float** make2DArray(size_t rows, size_t cols){
         if(rows == 0 || cols == 0) return nullptr;
-        float** rawData = dataC2DAllocator::allocate(rows, sizeof(float*));
+        float** rawData = DataC2DAllocator::allocate(rows, sizeof(float*));
         for(size_t i = 0; i < rows; i++){
-            rawData[i] = dataCitemAllocator::allocate(cols, sizeof(float));}
+            rawData[i] = DataCitemAllocator::allocate(cols, sizeof(float));}
         return rawData;
     }
 
     void freeRawData(float** rawData, size_t row_count){
     if(rawData){
-        for(size_t i = 0; i < row_count; i++){dataItemAllocator::deallocate(rawData[i]);}
-        data2DAllocator::deallocate(rawData);}
+        for(size_t i = 0; i < row_count; i++){DataItemAllocator::deallocate(rawData[i]);}
+        Data2DAllocator::deallocate(rawData);}
     }
     
     void printMatrix(const Matrix& matrix){
@@ -54,16 +54,16 @@ namespace MatrixFunc{
         auto val    =   m->getData();
         if(m->getRowCount() < size){
         // TODO replace the code below with NetSimpleAlloc::deallocate()...
-        val = dataC2DAllocator::reallocate(val, size*sizeof(float*));
+        val = DataC2DAllocator::reallocate(val, size*sizeof(float*));
         for(size_t i = m->getRowCount(); i < size; i++){
             // calloc data with new row.
-            val[i]  =   dataCitemAllocator::allocate(m->getColCount(), sizeof(float));}
+            val[i]  =   DataCitemAllocator::allocate(m->getColCount(), sizeof(float));}
         }
         else if(m->getRowCount() > size){
             for(size_t i = size; i < m->getRowCount();i++){
-                dataCitemAllocator::deallocate(val[i]);
+                DataCitemAllocator::deallocate(val[i]);
             }
-            val     =   dataC2DAllocator::reallocate(val, size* sizeof(float*));
+            val     =   DataC2DAllocator::reallocate(val, size* sizeof(float*));
         }
         m->setRowCount(size);
         return;
@@ -99,7 +99,7 @@ namespace MatrixFunc{
         if(column >= matrix->getColCount() || !val) return nullptr;
         size_t row_count = matrix->getRowCount();
         size_t col_count = matrix->getColCount();
-        float* col = dataCitemAllocator::allocate(row_count, sizeof(float));
+        float* col = DataCitemAllocator::allocate(row_count, sizeof(float));
         for(size_t i = 0; i < row_count; i++){
             col[i] = val[i][column];
             // replace the data with rest of column.
@@ -125,7 +125,7 @@ namespace MatrixFunc{
         size_t col_count  = srcMatrix->getColCount();
         if(m >= row_count || !val)
             return;
-        auto hVal = dataC2DAllocator::allocate(m, sizeof(float*));
+        auto hVal = DataC2DAllocator::allocate(m, sizeof(float*));
         for(size_t i = 0; i < m;i++){
             // get a random row count.
             size_t index = rand() % row_count;
@@ -153,7 +153,7 @@ Matrix::~Matrix(){
     if(ref_count_ == 0)
         MatrixFunc::freeRawData(data_, row_count_);
     else
-        dataC2DAllocator::deallocate(data_);
+        DataC2DAllocator::deallocate(data_);
     }
 
 Matrix::Matrix(size_t rows, size_t cols){

@@ -3,10 +3,14 @@
 #include <stddef.h>
 #include "include/net/layer.h"
 #include "include/Utils/tree.h"
+
 /*@brief  learning rate policy. */
 enum class LearningRatePolicy{
     CONSTANT, STEP, EXP, POLY, STEPS, STG, RANDOM
 };
+
+
+
 
 typedef struct Network{
     int                 totalLayerNum;
@@ -63,7 +67,7 @@ typedef struct Network{
 } Network;
 
 namespace NetworkOP{
-    extern Network make_network(int n);
+    extern Network makeNetwork(int n);
 }
 
 #endif
