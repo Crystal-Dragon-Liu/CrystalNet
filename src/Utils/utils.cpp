@@ -108,5 +108,9 @@ namespace UtilFunc
     }
     void freeNothing(void* data){return;}
 
+    void errorOccur(const char* msg){
+        std::cout << "Error: " << "<" << msg << ">" << std::endl;
+        exit(0);
+    }
 
 }

@@ -5,6 +5,7 @@
 #include "include/Utils/config_list.h"
 #include "include/data/matrix.h"
 #include "include/data/image.h"
+#include "include/net/network.h"
 using namespace ImageFunc;
 Matrix* initMatrixWithValue(size_t row, size_t col, float value){
 	Matrix* matrix = new Matrix(row, col);
@@ -117,7 +118,7 @@ TEST(BasicListTest, DISABLED_Test4){
 	1. Create a NodeList to store the network configuration.
 	2. free this NodeList.
 */
-TEST(BasicListTest, Test5){
+TEST(BasicListTest, DISABLED_Test5){
 	std::string filename("/root/test_data/yolo.cfg");
 	// NodeList* list = ConfigIO::readDataAndCfg(filename);
 	NodeList* list = ConfigIO::readModelConfig(filename.data());
@@ -131,4 +132,16 @@ TEST(BasicListTest, Test5){
 	UtilFunc::printCharArray(val);
 	std::cout << std::endl;
 	free(val);
+}
+
+/*
+	Test list:
+	1. Create a NodeList to store the network configuration
+	2. test method named parseNetworkConfig.
+*/
+TEST(BasicListTest, Test6){
+	std::string filename("/root/test_data/yolo.cfg");
+	Network net = NetworkOP::parseNetworkConfig(filename.data());
+	// free network
+    NetworkOP::freeNetwork(net);
 }

@@ -5,7 +5,7 @@
 
 namespace UtilFunc
 {
-    extern void file_error(char* filename);
+    
     extern void stripUselessChr(std::string& str);
     extern void copyCharArray(char* des, const std::string& line);
     extern void printCharArray(char* data);
@@ -14,6 +14,10 @@ namespace UtilFunc
     extern void freeKyp(void* data);
     extern void freeConfigSection(void* data);
     extern void freeNothing(void* data);
+
+    /* some much more general tools */
+    extern void file_error(char* filename);
+    extern void errorOccur(const char* msg);
 }
 
 #endif
