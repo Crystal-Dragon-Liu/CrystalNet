@@ -3,5 +3,4 @@
 #include "include/Utils/list.h"
 #include <iostream>
 
-
 #endif  // end CONFIG_H

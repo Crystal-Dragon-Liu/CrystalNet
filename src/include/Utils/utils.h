@@ -1,6 +1,28 @@
 #ifndef UTILS_H
 #define UTILS_H
 #include <string>
+#include <iostream>
+#define LOG(info) log__(__FILE__, __func__, __LINE__, info)
+
+inline void log__(std::string file_name, std::string func_name, int line, const char* info) {
+    std::string out = file_name + " " + func_name + ", line " + std::to_string(line) + ": ";
+    std::cout << out << info << std::endl;
+}
+
+inline void print__() { std::cout << std::endl; };
+
+/**
+ * TODO change the output to a thread safe method
+ * do not use cout to output with this method in concurrency environment
+ * This is thread unsafety
+ */
+template<typename T, typename... Types>
+void print__(const T& firstArg, const Types&... args) {
+    std::cout << firstArg << " ";
+    print__(args...);
+}
+
+#define PRINT(...) print__(__VA_ARGS__)
 
 
 namespace UtilFunc
@@ -20,6 +42,7 @@ namespace UtilFunc
     extern void errorOccur(const char* msg);
     extern int charToInt(const char* data);
     extern float charToFloat(const char* data);
+    extern char* constCharToChar(const char* data);
 }
 
 #endif

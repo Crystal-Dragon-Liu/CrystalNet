@@ -154,7 +154,9 @@ namespace ConfigIO{
         @brief  convert value to it with specific type.
     */
     extern int     configFindToInt(NodeList*l, const char* key, int def, bool quiet=false);
+
     extern char*   configFindToStr(NodeList*l, const char* key, char* def, bool quiet=false);
+    
     extern float   configFindToFloat(NodeList*l, const char* key, float def, bool quiet=false);
 }
 

@@ -56,8 +56,44 @@ namespace NetworkOP{
         net->batch_ /= subdivs;
         net->batch_ *= net->timeSteps_;
         net->subdivisions_ = net->subdivisions_;
+        // parameters for adam algorithm
+        net->adam_ = ConfigIO::configFindToInt(options, "adam", 0);
+        if(net->adam_){
+            net->b1_ = ConfigIO::configFindToFloat(options, "B1", 0);
+            net->b2_ = ConfigIO::configFindToFloat(options, "B2", 0);
+            net->eps_ = ConfigIO::configFindToFloat(options, "eps", .00000001);
+        }
+        net->height_ = ConfigIO::configFindToInt(options, "height", 0);
+        net->width_ = ConfigIO::configFindToInt(options, "width", 0);
+        net->channel_ = ConfigIO::configFindToInt(options, "channels", 0);
+        net->numInputs_ = ConfigIO::configFindToInt(options, "inputs", net->channel_ * net->height_ * net->width_, true);
+        net->maxCrop_ = ConfigIO::configFindToInt(options, "max_crop", net->width_ * 2, true);
+        net->minCrop_ = ConfigIO::configFindToInt(options, "min_crop", net->width_, true);
+        net->center_ = ConfigIO::configFindToInt(options, "center", 0, true);
+        net->angle_ = ConfigIO::configFindToFloat(options, "angle", 0, true);
+        net->aspect_ = ConfigIO::configFindToFloat(options, "aspect", 1, true);
+        net->saturation_ = ConfigIO::configFindToFloat(options, "saturation", 1, true);
+        net->exposure_ = ConfigIO::configFindToFloat(options, "exposure", 1, true);
+        net->hue_ = ConfigIO::configFindToFloat(options, "hue", 0, true);
+        // check input parameters
+        if(!net->numInputs_ && !(net->height_ && net->width_ && net->channel_) ){
+            UtilFunc::errorOccur("No input parameters supplied");}
+        char* policy_s = ConfigIO::configFindToStr(options, "policy", const_cast<char*>("constant"));
+        net->learningRatePolicy_ = parseLearningRatePolicy(policy_s);
+        // TODO parse learning rate policy and initialize involved parameters.
     }
 
+    LearningRatePolicy parseLearningRatePolicy(char* policy){
+        if (strcmp(policy, "random")==0) return LearningRatePolicy::RANDOM;
+        if (strcmp(policy, "poly")==0) return LearningRatePolicy::POLY;
+        if (strcmp(policy, "constant")==0) return LearningRatePolicy::CONSTANT;
+        if (strcmp(policy, "step")==0) return LearningRatePolicy::STEP;
+        if (strcmp(policy, "exp")==0) return LearningRatePolicy::EXP;
+        if (strcmp(policy, "sigmoid")==0) return LearningRatePolicy::SIG;
+        if (strcmp(policy, "steps")==0) return LearningRatePolicy::STEPS;
+        PRINT("Couldn't find policy <", policy, ">, going with constant\n");
+        return LearningRatePolicy::CONSTANT;
+    }
 
 }
 

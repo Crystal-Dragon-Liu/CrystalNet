@@ -115,5 +115,6 @@ namespace UtilFunc
 
     int charToInt(const char* data){return atoi(data);}
     float charToFloat(const char* data){ return atof(data); }
+    char* constCharToChar(const char* data){ return const_cast<char*>(data);}
 
 }

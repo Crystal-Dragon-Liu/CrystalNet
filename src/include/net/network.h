@@ -3,10 +3,11 @@
 #include <stddef.h>
 #include "include/net/layer.h"
 #include "include/Utils/tree.h"
-
+#include <map>
+#include <string>
 /*@brief  learning rate policy. */
 enum class LearningRatePolicy{
-    CONSTANT, STEP, EXP, POLY, STEPS, STG, RANDOM
+    CONSTANT, STEP, EXP, POLY, STEPS, SIG, RANDOM
 };
 
 
@@ -25,6 +26,24 @@ typedef struct Network{
     int                 timeSteps_;
     int                 noTruth_;
     int                 subdivisions_;
+    int                 adam_;
+    // parameters for adam algorithm.
+    float               b1_;
+    float               b2_;
+    float               eps_;
+    int                 height_;
+    int                 width_;
+    int                 channel_;
+    int                 numInputs_;
+    int                 maxCrop_;
+    int                 minCrop_;
+    int                 center_;
+    float               angle_;
+    float               aspect_;
+    float               saturation_;
+    float               exposure_;
+    float               hue_;
+    LearningRatePolicy  learningRatePolicy_;
     // float*              output;
     // LearningRatePolicy  policy;
     
@@ -89,29 +108,35 @@ namespace NetworkOP{
         @brief make sure the config item is relative to Network.
         @param section, a piece of config, would be expected.
     */
-    extern bool     checkNetworkConfig(ConfigSection* section);
+    extern bool                 checkNetworkConfig(ConfigSection* section);
+
     /*  
         @brief create a Network obj with some parameters initialized.
         @param n is the total size of layers.
     */
-    extern Network  makeNetwork(int n);
+    extern Network              makeNetwork(int n);
 
     /*
         @brief  free space from Network.
         @param  network
     */
-    extern void     freeNetwork(Network net);
+    extern void                 freeNetwork(Network net);
 
     /*
         @brief parse all of the config from a file with format 'cfg'
         @param fileName is the path of .cfg file.
     */
-    extern Network  parseNetworkConfig(const char* fileName);
+    extern Network              parseNetworkConfig(const char* fileName);
 
     /*
         @brief load the general config
     */
-    extern void loadNetworkCommonConfig(NodeList* options, Network* net);
+    extern void                 loadNetworkCommonConfig(NodeList* options, Network* net);
+
+    /*
+        @brief loading learning rate policy from char array expected.
+    */
+    extern LearningRatePolicy   parseLearningRatePolicy(char* policy);
 }
 
 #endif

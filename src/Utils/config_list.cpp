@@ -27,7 +27,8 @@ namespace ConfigIO{
     }
 
     char*   configFindToStr(NodeList*l, const char* key, char* def, bool quiet){
-        return nullptr;
+        return configFindToValue<char*>(l, key, def, UtilFunc::constCharToChar);
+        // return nullptr;
     }
 
     float   configFindToFloat(NodeList*l, const char* key, float def, bool quiet){
