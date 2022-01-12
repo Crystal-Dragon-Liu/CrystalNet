@@ -17,10 +17,10 @@ using namespace MyAllocFunc;
 			type: type of configuration {net/network, maxpool, convolutional}
 			config: list of config for network or hypeparamters
 */
-struct ConfigSection{
+typedef struct ConfigSection{
 	char* type;
 	NodeList* config;
-};
+}ConfigSection;
 
 typedef NetSimpleAlloc<ConfigSection, MyNetAlloc> SectionAllocator;
 
@@ -134,8 +134,28 @@ namespace ConfigIO{
     /*
         @brief  find value according to the key expected from NodeList.
     */
-    extern char*  configFind(NodeList* l, char* key);
+    extern char*  configFind(NodeList* l, const char* key);
 
+    /* 
+        @brief  find value from NodeList according to key and switch it to int
+        @param  def is the default value which would be loaded into network if
+                there is no specific value found from l.
+    */
+    template<typename _Tp>
+    _Tp     configFindToValue(NodeList*l, const char* key, _Tp def, _Tp (*Action)(const char*), bool quiet = false){
+        char* value = configFind(l, key);
+        if(value){return (*Action)(value);}
+        if(!quiet)
+            std::cout << key << " -> using default: " << def << "\n";
+        return def;
+    }
+
+    /*
+        @brief  convert value to it with specific type.
+    */
+    extern int     configFindToInt(NodeList*l, const char* key, int def, bool quiet=false);
+    extern char*   configFindToStr(NodeList*l, const char* key, char* def, bool quiet=false);
+    extern float   configFindToFloat(NodeList*l, const char* key, float def, bool quiet=false);
 }
 
 

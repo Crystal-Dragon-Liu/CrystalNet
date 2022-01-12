@@ -113,4 +113,7 @@ namespace UtilFunc
         exit(0);
     }
 
+    int charToInt(const char* data){return atoi(data);}
+    float charToFloat(const char* data){ return atof(data); }
+
 }

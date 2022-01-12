@@ -7,8 +7,7 @@
 #include <sstream>
 
 namespace ConfigIO{
-
-    char*  configFind(NodeList* l, char* key){
+    char*  configFind(NodeList* l, const char* key){
         Node* currentNode = l->front_;
         if(!currentNode) return nullptr;
         while(currentNode){
@@ -22,4 +21,17 @@ namespace ConfigIO{
         }
         return nullptr;
     }
+
+    int     configFindToInt(NodeList*l, const char* key, int def, bool quiet){
+        return configFindToValue<int>(l, key, def, UtilFunc::charToInt, quiet);
+    }
+
+    char*   configFindToStr(NodeList*l, const char* key, char* def, bool quiet){
+        return nullptr;
+    }
+
+    float   configFindToFloat(NodeList*l, const char* key, float def, bool quiet){
+        return configFindToValue<float>(l, key, def, UtilFunc::charToFloat, quiet);
+    }
+
 }

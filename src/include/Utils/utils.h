@@ -18,6 +18,8 @@ namespace UtilFunc
     /* some much more general tools */
     extern void file_error(char* filename);
     extern void errorOccur(const char* msg);
+    extern int charToInt(const char* data);
+    extern float charToFloat(const char* data);
 }
 
 #endif

@@ -11,14 +11,20 @@ enum class LearningRatePolicy{
 
 
 typedef struct Network{
-    int                 totalLayerNum;
-    // int                 batch; /// the batch size of image set.
-    size_t*             seen; /// num of image which have been processed.
+    int                 totalLayerNum_;
+    int                 batch_; /// the batch size of image set.
+    size_t*             seen_; /// num of image which have been processed.
+    float               learningRate_;
+    float               momentum_;
+    float               decay_;
     // float               epoch;
     // int                 subdivisions;
     // float               momentum;
     // float               decay;
-    Layer *             layers;
+    Layer *             layers_;
+    int                 timeSteps_;
+    int                 noTruth_;
+    int                 subdivisions_;
     // float*              output;
     // LearningRatePolicy  policy;
     
@@ -61,7 +67,7 @@ typedef struct Network{
     // float *workspace;
     // int train;
     // int index;
-    float *cost; 
+    float *cost_; 
 } Network;
 
 typedef struct sizeParams{
@@ -74,11 +80,38 @@ typedef struct sizeParams{
     Network net;
 }sizeParams;
 
-namespace NetworkOP{
+struct ConfigSection;
+struct NodeList;
+// typedef struct Network Network;
 
-    extern Network makeNetwork(int n);
-    extern void freeNetwork(Network net);
-    extern Network parseNetworkConfig(const char* fileName);
+namespace NetworkOP{
+    /*  
+        @brief make sure the config item is relative to Network.
+        @param section, a piece of config, would be expected.
+    */
+    extern bool     checkNetworkConfig(ConfigSection* section);
+    /*  
+        @brief create a Network obj with some parameters initialized.
+        @param n is the total size of layers.
+    */
+    extern Network  makeNetwork(int n);
+
+    /*
+        @brief  free space from Network.
+        @param  network
+    */
+    extern void     freeNetwork(Network net);
+
+    /*
+        @brief parse all of the config from a file with format 'cfg'
+        @param fileName is the path of .cfg file.
+    */
+    extern Network  parseNetworkConfig(const char* fileName);
+
+    /*
+        @brief load the general config
+    */
+    extern void loadNetworkCommonConfig(NodeList* options, Network* net);
 }
 
 #endif
