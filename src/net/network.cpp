@@ -3,6 +3,9 @@
 #include "include/Utils/config_list.h"
 // #include "include/Utils/utils.h"
 
+#define CONFIG_FIND_I(...) ConfigIO::configFindToInt(__VA_ARGS__)
+#define CONFIG_FIND_F(...) ConfigIO::configFindToFloat(__VA_ARGS__)
+#define CONFIG_FIND_S(...) ConfigIO::configFindToStr(__VA_ARGS__)
 /* some allocator for Layer*/
 typedef NetSimpleAlloc<Layer, MyNetCAlloc> LayerAllocator;
 namespace NetworkOP{
@@ -58,42 +61,42 @@ namespace NetworkOP{
     void loadNetworkCommonConfig(NodeList* options, Network* net){
         using namespace std;
         cout << "<---- loading common parameters ---->" << endl;
-        net->batch_ = ConfigIO::configFindToInt(options,"batch", 1);
-        net->learningRate_ = ConfigIO::configFindToInt(options, "learning_rate", .001);
-        net->decay_ = ConfigIO::configFindToFloat(options, "decay", .0001);
-        net->momentum_ = ConfigIO::configFindToFloat(options, "momentum", .9);
-        int subdivs = ConfigIO::configFindToInt(options, "subdivisions", 1);
-        net->timeSteps_ = ConfigIO::configFindToInt(options, "time_steps", 1, true);
-        net->noTruth_ = ConfigIO::configFindToInt(options, "notruth", 0);
+        net->batch_ =           CONFIG_FIND_I(options,"batch", 1);
+        net->learningRate_ =    CONFIG_FIND_F(options, "learning_rate", .001);
+        net->decay_ =           CONFIG_FIND_F(options, "decay", .0001);
+        net->momentum_ =        CONFIG_FIND_F(options, "momentum", .9);
+        int subdivs =           CONFIG_FIND_I(options, "subdivisions", 1);
+        net->timeSteps_ =       CONFIG_FIND_I(options, "time_steps", 1, true);
+        net->noTruth_ =         CONFIG_FIND_I(options, "notruth", 0);
         net->batch_ /= subdivs;
         net->batch_ *= net->timeSteps_;
         net->subdivisions_ = net->subdivisions_;
         // parameters for adam algorithm
-        net->adam_ = ConfigIO::configFindToInt(options, "adam", 0);
+        net->adam_ =            CONFIG_FIND_I(options, "adam", 0);
         if(net->adam_){
-            net->b1_ = ConfigIO::configFindToFloat(options, "B1", 0);
-            net->b2_ = ConfigIO::configFindToFloat(options, "B2", 0);
-            net->eps_ = ConfigIO::configFindToFloat(options, "eps", .00000001);
+            net->b1_ =          CONFIG_FIND_F(options, "B1", 0);
+            net->b2_ =          CONFIG_FIND_F(options, "B2", 0);
+            net->eps_ =         CONFIG_FIND_F(options, "eps", .00000001);
         }
-        net->height_ = ConfigIO::configFindToInt(options, "height", 0);
-        net->width_ = ConfigIO::configFindToInt(options, "width", 0);
-        net->channel_ = ConfigIO::configFindToInt(options, "channels", 0);
-        net->numInputs_ = ConfigIO::configFindToInt(options, "inputs", net->channel_ * net->height_ * net->width_, true);
-        net->maxCrop_ = ConfigIO::configFindToInt(options, "max_crop", net->width_ * 2, true);
-        net->minCrop_ = ConfigIO::configFindToInt(options, "min_crop", net->width_, true);
-        net->center_ = ConfigIO::configFindToInt(options, "center", 0, true);
-        net->angle_ = ConfigIO::configFindToFloat(options, "angle", 0, true);
-        net->aspect_ = ConfigIO::configFindToFloat(options, "aspect", 1, true);
-        net->saturation_ = ConfigIO::configFindToFloat(options, "saturation", 1, true);
-        net->exposure_ = ConfigIO::configFindToFloat(options, "exposure", 1, true);
-        net->hue_ = ConfigIO::configFindToFloat(options, "hue", 0, true);
+        net->height_ =          CONFIG_FIND_I(options, "height", 0);
+        net->width_ =           CONFIG_FIND_I(options, "width", 0);
+        net->channel_ =         CONFIG_FIND_I(options, "channels", 0);
+        net->numInputs_ =       CONFIG_FIND_I(options, "inputs", net->channel_ * net->height_ * net->width_, true);
+        net->maxCrop_ =         CONFIG_FIND_I(options, "max_crop", net->width_ * 2, true);
+        net->minCrop_ =         CONFIG_FIND_I(options, "min_crop", net->width_, true);
+        net->center_ =          CONFIG_FIND_I(options, "center", 0, true);
+        net->angle_ =           CONFIG_FIND_F(options, "angle", 0, true);
+        net->aspect_ =          CONFIG_FIND_F(options, "aspect", 1, true);
+        net->saturation_ =      CONFIG_FIND_F(options, "saturation", 1, true);
+        net->exposure_ =        CONFIG_FIND_F(options, "exposure", 1, true);
+        net->hue_ =             CONFIG_FIND_F(options, "hue", 0, true);
         // check input parameters
         if(!net->numInputs_ && !(net->height_ && net->width_ && net->channel_) ){
             UtilFunc::errorOccur("No input parameters supplied");}
-        char* policy_s = ConfigIO::configFindToStr(options, "policy", const_cast<char*>("constant"));
+        char* policy_s =        CONFIG_FIND_S(options, "policy", const_cast<char*>("constant"));
         net->learningRatePolicy_ = parseLearningRatePolicy(policy_s);
         // TODO parse learning rate policy and initialize involved parameters.
-        net->numSteps_ = ConfigIO::configFindToInt(options, "max_batches", 0);
+        net->numSteps_ =        CONFIG_FIND_I(options, "max_batches", 0);
     }
 
     LearningRatePolicy parseLearningRatePolicy(char* policy){
@@ -109,8 +112,8 @@ namespace NetworkOP{
     }
 
     void               stepInitialize(Network* net, NodeList* options){
-        net->step_ = ConfigIO::configFindToInt(options, "step", 1);
-        net->scale_ = ConfigIO::configFindToFloat(options, "scale", 1);
+        net->step_ = CONFIG_FIND_I(options, "step", 1);
+        net->scale_ = CONFIG_FIND_I(options, "scale", 1);
     }
     void                 stepsInitialize(Network* net, NodeList* options){
         char *l = ConfigIO::configFind(options, "steps");   
@@ -137,12 +140,12 @@ namespace NetworkOP{
     }
 
     void                 expInitialize(Network* net, NodeList* options){
-        net->gamma_ = ConfigIO::configFindToFloat(options, "gamma", 1);
+        net->gamma_ = CONFIG_FIND_F(options, "gamma", 1);
     }
 
     void                 sigInitialize(Network* net, NodeList* options){
-        net->gamma_ = ConfigIO::configFindToFloat(options, "gamma", 1);
-        net->step_  = ConfigIO::configFindToFloat(options, "step", 1);
+        net->gamma_ = CONFIG_FIND_F(options, "gamma", 1);
+        net->step_  = CONFIG_FIND_F(options, "step", 1);
     }
     void                 polyInitialize(Network* net, NodeList*options){}
     void                 randomInitialize(Network*net, NodeList*options){}
