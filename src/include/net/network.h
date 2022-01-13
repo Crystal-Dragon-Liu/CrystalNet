@@ -14,7 +14,7 @@ enum class LearningRatePolicy{
 typedef struct Network{
     int                 totalLayerNum_;
     int                 batch_; /// the batch size of image set.
-    size_t*             seen_; /// num of image which have been processed.
+    size_t*             seen_; /// num of image which have been processed. //! ptr
     float               learningRate_;
     float               momentum_;
     float               decay_;
@@ -22,7 +22,7 @@ typedef struct Network{
     // int                 subdivisions;
     // float               momentum;
     // float               decay;
-    Layer *             layers_;
+    Layer *             layers_; //! ptr
     int                 timeSteps_;
     int                 noTruth_;
     int                 subdivisions_;
@@ -44,6 +44,17 @@ typedef struct Network{
     float               exposure_;
     float               hue_;
     LearningRatePolicy  learningRatePolicy_;
+    // parameters for policy STEP, SIG
+    int                 step_;
+    float               scale_;
+    // parameters for policy STEPS
+    int*                steps_;  //! ptr
+    float*              scales_; //! ptr
+    int                 numSteps_;
+    // parameters for policy EXP, SIG
+    float               gamma_;
+
+    int                 maxBatches_;
     // float*              output;
     // LearningRatePolicy  policy;
     
@@ -123,6 +134,12 @@ namespace NetworkOP{
     extern void                 freeNetwork(Network net);
 
     /*
+        @brief free parameters of learning rate policy
+    */
+    extern void                 freeNetworkParam(Network* net);
+    extern void                 freeStepParam(Network* net);
+
+    /*
         @brief parse all of the config from a file with format 'cfg'
         @param fileName is the path of .cfg file.
     */
@@ -137,6 +154,14 @@ namespace NetworkOP{
         @brief loading learning rate policy from char array expected.
     */
     extern LearningRatePolicy   parseLearningRatePolicy(char* policy);
+
+    /* @brief */
+    extern void                 stepInitialize(Network* net, NodeList* options);
+    extern void                 stepsInitialize(Network* net, NodeList* options);
+    extern void                 expInitialize(Network* net, NodeList* options);
+    extern void                 sigInitialize(Network* net, NodeList* options);
+    extern void                 polyInitialize(Network* net, NodeList*options);
+    extern void                 randomInitialize(Network*net, NodeList*options);
 }
 
 #endif

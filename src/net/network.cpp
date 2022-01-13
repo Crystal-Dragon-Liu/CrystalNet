@@ -12,6 +12,8 @@ namespace NetworkOP{
         network.layers_ = LayerAllocator::allocate(network.totalLayerNum_, sizeof(Layer));
         network.seen_ = SizeAllocator::allocate(1, sizeof(int));
         network.cost_ = DataCitemAllocator::allocate(1, sizeof(float));
+        network.steps_ = nullptr;
+        network.scales_ = nullptr;
         return network;
     }
 
@@ -19,7 +21,16 @@ namespace NetworkOP{
         LayerAllocator::deallocate(net.layers_);
         SizeAllocator::deallocate(net.seen_);
         DataCitemAllocator::deallocate(net.cost_);
+        // free the space for parameters
+        freeNetworkParam(&net);
     }
+
+    void  freeStepParam(Network* net){
+        if(net->steps_ != nullptr) IntAllocator::deallocate(net->steps_);
+        if(net->scales_ != nullptr) DataCitemAllocator::deallocate(net->scales_);
+    }
+
+    void  freeNetworkParam(Network* net){freeStepParam(net);}
 
     Network parseNetworkConfig(const char* fileName){
         // read network configuration.
@@ -45,7 +56,8 @@ namespace NetworkOP{
     }
 
     void loadNetworkCommonConfig(NodeList* options, Network* net){
-        std::cout << "<---- loading common parameters ---->" << std::endl;
+        using namespace std;
+        cout << "<---- loading common parameters ---->" << endl;
         net->batch_ = ConfigIO::configFindToInt(options,"batch", 1);
         net->learningRate_ = ConfigIO::configFindToInt(options, "learning_rate", .001);
         net->decay_ = ConfigIO::configFindToFloat(options, "decay", .0001);
@@ -81,6 +93,7 @@ namespace NetworkOP{
         char* policy_s = ConfigIO::configFindToStr(options, "policy", const_cast<char*>("constant"));
         net->learningRatePolicy_ = parseLearningRatePolicy(policy_s);
         // TODO parse learning rate policy and initialize involved parameters.
+        net->numSteps_ = ConfigIO::configFindToInt(options, "max_batches", 0);
     }
 
     LearningRatePolicy parseLearningRatePolicy(char* policy){
@@ -94,6 +107,45 @@ namespace NetworkOP{
         PRINT("Couldn't find policy <", policy, ">, going with constant\n");
         return LearningRatePolicy::CONSTANT;
     }
+
+    void               stepInitialize(Network* net, NodeList* options){
+        net->step_ = ConfigIO::configFindToInt(options, "step", 1);
+        net->scale_ = ConfigIO::configFindToFloat(options, "scale", 1);
+    }
+    void                 stepsInitialize(Network* net, NodeList* options){
+        char *l = ConfigIO::configFind(options, "steps");   
+        char *p = ConfigIO::configFind(options, "scales");   
+        if(!l || !p) UtilFunc::errorOccur("STEPS policy must have steps and scales in cfg file");
+        int len = strlen(l);
+        int n = 1;
+        int i;
+        for(i = 0; i < len; ++i){
+            if (l[i] == ',') ++n;
+        }
+        int* steps = IntAllocator::allocate(n, sizeof(int));
+        float* scales = DataCitemAllocator::allocate(n, sizeof(float));
+        for(i = 0; i < n; ++i){
+            int step    = UtilFunc::charToInt(l);
+            float scale = UtilFunc::charToFloat(p);
+            l = strchr(l, ',')+1;
+            p = strchr(p, ',')+1;
+            steps[i] = step;
+            scales[i] = scale;
+        }
+        net->steps_ = steps;
+        net->scales_ = scales;
+    }
+
+    void                 expInitialize(Network* net, NodeList* options){
+        net->gamma_ = ConfigIO::configFindToFloat(options, "gamma", 1);
+    }
+
+    void                 sigInitialize(Network* net, NodeList* options){
+        net->gamma_ = ConfigIO::configFindToFloat(options, "gamma", 1);
+        net->step_  = ConfigIO::configFindToFloat(options, "step", 1);
+    }
+    void                 polyInitialize(Network* net, NodeList*options){}
+    void                 randomInitialize(Network*net, NodeList*options){}
 
 }
 

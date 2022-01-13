@@ -83,6 +83,7 @@ typedef NetSimpleAlloc<float*, MyNetAlloc>  Data2DAllocator;
 typedef NetSimpleAlloc<float,  MyNetCAlloc> DataCitemAllocator;
 typedef NetSimpleAlloc<float*, MyNetCAlloc> DataC2DAllocator;
 typedef NetSimpleAlloc<size_t, MyNetCAlloc> SizeAllocator;
+typedef NetSimpleAlloc<int, MyNetCAlloc> IntAllocator;
 
 
 
