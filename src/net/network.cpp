@@ -6,31 +6,38 @@
 #define CONFIG_FIND_I(...) ConfigIO::configFindToInt(__VA_ARGS__)
 #define CONFIG_FIND_F(...) ConfigIO::configFindToFloat(__VA_ARGS__)
 #define CONFIG_FIND_S(...) ConfigIO::configFindToStr(__VA_ARGS__)
+
+
 /* some allocator for Layer*/
 typedef NetSimpleAlloc<Layer, MyNetCAlloc> LayerAllocator;
+#define ALLOC_LAYER(n) LayerAllocator::allocate(n, sizeof(Layer))
+#define DEALLOC_LAYER(...) LayerAllocator::deallocate(__VA_ARGS__)
+
+
 namespace NetworkOP{
     Network makeNetwork(int n){
         Network network;
         network.totalLayerNum_ = n;
-        network.layers_ = LayerAllocator::allocate(network.totalLayerNum_, sizeof(Layer));
-        network.seen_ = SizeAllocator::allocate(1, sizeof(int));
-        network.cost_ = DataCitemAllocator::allocate(1, sizeof(float));
+        network.layers_ = ALLOC_LAYER(network.totalLayerNum_);
+        network.seen_ = ALLOC_SIZE_PTR(1);
+        network.cost_ = ALLOC_FLOAT_PTR(1);
         network.steps_ = nullptr;
         network.scales_ = nullptr;
         return network;
     }
 
     void freeNetwork(Network net){
-        LayerAllocator::deallocate(net.layers_);
-        SizeAllocator::deallocate(net.seen_);
-        DataCitemAllocator::deallocate(net.cost_);
+        DEALLOC_LAYER(net.layers_);
+        DEALLOC_SIZE_PTR(net.seen_);
+        // SizeAllocator::deallocate(net.seen_);
+        DEALLOC_FLOAT_PTR(net.cost_);
         // free the space for parameters
         freeNetworkParam(&net);
     }
 
     void  freeStepParam(Network* net){
-        if(net->steps_ != nullptr) IntAllocator::deallocate(net->steps_);
-        if(net->scales_ != nullptr) DataCitemAllocator::deallocate(net->scales_);
+        if(net->steps_ != nullptr) DEALLOC_INT_PTR(net->steps_);
+        if(net->scales_ != nullptr) DEALLOC_FLOAT_PTR(net->scales_);
     }
 
     void  freeNetworkParam(Network* net){freeStepParam(net);}
@@ -95,8 +102,10 @@ namespace NetworkOP{
             UtilFunc::errorOccur("No input parameters supplied");}
         char* policy_s =        CONFIG_FIND_S(options, "policy", const_cast<char*>("constant"));
         net->learningRatePolicy_ = parseLearningRatePolicy(policy_s);
+        //TODO initialize burn in ???
         // TODO parse learning rate policy and initialize involved parameters.
-        net->numSteps_ =        CONFIG_FIND_I(options, "max_batches", 0);
+        initLrParam(net, options);
+        net->maxBatches_ =        CONFIG_FIND_I(options, "max_batches", 0);
     }
 
     LearningRatePolicy parseLearningRatePolicy(char* policy){
@@ -125,8 +134,8 @@ namespace NetworkOP{
         for(i = 0; i < len; ++i){
             if (l[i] == ',') ++n;
         }
-        int* steps = IntAllocator::allocate(n, sizeof(int));
-        float* scales = DataCitemAllocator::allocate(n, sizeof(float));
+        int* steps = ALLOC_INT_PTR(n);
+        float* scales = ALLOC_FLOAT_PTR(n);
         for(i = 0; i < n; ++i){
             int step    = UtilFunc::charToInt(l);
             float scale = UtilFunc::charToFloat(p);
@@ -137,6 +146,7 @@ namespace NetworkOP{
         }
         net->steps_ = steps;
         net->scales_ = scales;
+        net->numSteps_ = n;
     }
 
     void                 expInitialize(Network* net, NodeList* options){
@@ -149,6 +159,29 @@ namespace NetworkOP{
     }
     void                 polyInitialize(Network* net, NodeList*options){}
     void                 randomInitialize(Network*net, NodeList*options){}
+    void                 initializePolicy(LearningRatePolicy policy){
+        switch (policy)
+        {
+        case LearningRatePolicy::STEP:
+            /* code */
+            break;
+        
+        default:
+            break;
+        }
+    }
+    void                 initLrParam(Network* net, NodeList* options){
+        switch (net->learningRatePolicy_)
+        {
+        case LearningRatePolicy::STEP:{stepInitialize(net, options);break;}
+        case LearningRatePolicy::STEPS:{stepsInitialize(net, options);break;}
+        case LearningRatePolicy::EXP:{expInitialize(net, options);break;}
+        case LearningRatePolicy::SIG:{sigInitialize(net, options);break;}
+        case LearningRatePolicy::POLY:{polyInitialize(net, options);break;}
+        default:
+            break;
+        }
+    }
 
 }
 

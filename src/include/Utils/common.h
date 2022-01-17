@@ -85,6 +85,14 @@ typedef NetSimpleAlloc<float*, MyNetCAlloc> DataC2DAllocator;
 typedef NetSimpleAlloc<size_t, MyNetCAlloc> SizeAllocator;
 typedef NetSimpleAlloc<int, MyNetCAlloc> IntAllocator;
 
+#define ALLOC_FLOAT_PTR(n) DataCitemAllocator::allocate(n, sizeof(float))
+#define DEALLOC_FLOAT_PTR(...) DataCitemAllocator::deallocate(__VA_ARGS__)
+#define ALLOC_INT_PTR(n) IntAllocator::allocate(n, sizeof(int))
+#define DEALLOC_INT_PTR(...) IntAllocator::deallocate(__VA_ARGS__)
+#define ALLOC_SIZE_PTR(n) SizeAllocator::allocate(n, sizeof(size_t))
+#define DEALLOC_SIZE_PTR(...) SizeAllocator::deallocate(__VA_ARGS__)
+
+
 
 
 // /// @brief delete the 2d array with type _Tp. make sure rowCount is matched to data.

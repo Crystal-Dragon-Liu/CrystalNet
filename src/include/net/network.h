@@ -155,13 +155,17 @@ namespace NetworkOP{
     */
     extern LearningRatePolicy   parseLearningRatePolicy(char* policy);
 
-    /* @brief */
+    /* @brief functions for initializing the parameters for learning rate policy*/
+    extern void                 initializePolicy(LearningRatePolicy policy);
     extern void                 stepInitialize(Network* net, NodeList* options);
     extern void                 stepsInitialize(Network* net, NodeList* options);
     extern void                 expInitialize(Network* net, NodeList* options);
     extern void                 sigInitialize(Network* net, NodeList* options);
     extern void                 polyInitialize(Network* net, NodeList*options);
     extern void                 randomInitialize(Network*net, NodeList*options);
+
+    /* @brief functions for initializing involving parameters via LearningRatePolicy expected. */
+    extern void                 initLrParam(Network* net, NodeList* options);
 }
 
 #endif
