@@ -53,7 +53,8 @@ namespace NetworkOP{
         NodeList* options = s->config;
         if(!checkNetworkConfig(s)) UtilFunc::errorOccur("First section must be [net] or [network]");
         // std::cout << "parsing network config" << std::endl;
-        loadNetworkCommonConfig(options, &net);
+        //TODO some bugs to fix in method loadNetworkCommonConfig.
+        // loadNetworkCommonConfig(options, &net);
         
         // free all nodeList;
         NodeOP::freeNodeList(sections, UtilFunc::freeConfigSection);
@@ -103,6 +104,8 @@ namespace NetworkOP{
         char* policy_s =        CONFIG_FIND_S(options, "policy", const_cast<char*>("constant"));
         net->learningRatePolicy_ = parseLearningRatePolicy(policy_s);
         //TODO initialize burn in ???
+        net->burnIn_ = CONFIG_FIND_I(options, "burn_in", 0, true);
+        net->power_  = CONFIG_FIND_F(options, "power", 4, true);
         // TODO parse learning rate policy and initialize involved parameters.
         initLrParam(net, options);
         net->maxBatches_ =        CONFIG_FIND_I(options, "max_batches", 0);

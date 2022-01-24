@@ -55,6 +55,11 @@ typedef struct Network{
     float               gamma_;
 
     int                 maxBatches_;
+    // Once burnIn_ is set, when number of updates is less than burnIn_
+    // instead of using the configured learning rate update policy, the following formula is used
+    // lr = base_lr * power(batch_num/burn_in, pwr)
+    int                 burnIn_; 
+    float               power_;
     // float*              output;
     // LearningRatePolicy  policy;
     
