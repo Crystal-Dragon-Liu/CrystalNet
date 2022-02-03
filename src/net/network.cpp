@@ -45,7 +45,7 @@ namespace NetworkOP{
     Network parseNetworkConfig(const char* fileName){
         // read network configuration.
         NodeList* sections = ConfigIO::readModelConfig(fileName);
-        Node* node = sections->front_;
+        Node* node = sections->front_; // only [net] config would be loaded.
         if(!node) UtilFunc::errorOccur("no sections loaded from config file!");
         Network net = makeNetwork(sections->size_ - 1);
 
@@ -54,8 +54,16 @@ namespace NetworkOP{
         if(!checkNetworkConfig(s)) UtilFunc::errorOccur("First section must be [net] or [network]");
         // std::cout << "parsing network config" << std::endl;
         //TODO some bugs to fix in method loadNetworkCommonConfig.
-        // loadNetworkCommonConfig(options, &net);
-        
+        loadNetworkCommonConfig(options, &net);
+        SizeParams params;
+        params.height = net.height_;
+        params.width = net.width_;
+        params.channals = net.channel_;
+        params.inputs = net.numInputs_;
+        params.batch = net.batch_;
+        params.time_steps = net.timeSteps_;
+        params.net = net;
+
         // free all nodeList;
         NodeOP::freeNodeList(sections, UtilFunc::freeConfigSection);
         return net;

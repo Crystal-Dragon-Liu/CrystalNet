@@ -105,7 +105,7 @@ typedef struct Network{
     float *cost_; 
 } Network;
 
-typedef struct sizeParams{
+typedef struct SizeParams{
     size_t batch;
     size_t inputs;
     size_t width;
@@ -113,7 +113,7 @@ typedef struct sizeParams{
     size_t channals;
     size_t time_steps;
     Network net;
-}sizeParams;
+}SizeParams;
 
 struct ConfigSection;
 struct NodeList;
