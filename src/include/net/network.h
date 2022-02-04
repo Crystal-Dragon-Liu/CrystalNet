@@ -11,6 +11,8 @@ enum class LearningRatePolicy{
 };
 
 
+
+
 typedef struct Network{
     int                 totalLayerNum_;
     int                 batch_; /// the batch size of image set.
@@ -111,14 +113,16 @@ typedef struct SizeParams{
     size_t width;
     size_t height;
     size_t channals;
+    size_t index;
     size_t time_steps;
     Network net;
 }SizeParams;
 
 struct ConfigSection;
 struct NodeList;
-// typedef struct Network Network;
 
+typedef Layer (*parseNetLayerFunc)(NodeList *options, SizeParams& params);
+// typedef struct Network Network;
 namespace NetworkOP{
     /*  
         @brief make sure the config item is relative to Network.
@@ -171,6 +175,8 @@ namespace NetworkOP{
 
     /* @brief functions for initializing involving parameters via LearningRatePolicy expected. */
     extern void                 initLrParam(Network* net, NodeList* options);
+
+    extern parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType);
 }
 
 #endif

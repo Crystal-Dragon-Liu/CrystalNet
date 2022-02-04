@@ -2,6 +2,7 @@
 #define LAYER_H
 #include <stddef.h>
 #include "include/net/activations.h"
+
 struct Network;
 typedef struct Network Network;
 struct Layer;
@@ -84,7 +85,9 @@ struct Layer{
 };
 
 namespace LayerOP{
+    extern Layer makeLayer();
     extern void freeLayer(Layer);
+    extern LAYER_TYPE parseLayerType(char* type);
 }
 
 

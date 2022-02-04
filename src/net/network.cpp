@@ -14,6 +14,7 @@ typedef NetSimpleAlloc<Layer, MyNetCAlloc> LayerAllocator;
 #define DEALLOC_LAYER(...) LayerAllocator::deallocate(__VA_ARGS__)
 
 
+
 namespace NetworkOP{
     Network makeNetwork(int n){
         Network network;
@@ -63,6 +64,23 @@ namespace NetworkOP{
         params.batch = net.batch_;
         params.time_steps = net.timeSteps_;
         params.net = net;
+        // parse layer parameters
+        size_t workplaceSize = 0;
+        node = node->next_;
+        int count = 0;
+        PRINT("layer     filters    size              input                output");
+        while(node){
+            params.index = count;
+            PRINT(count);
+            s = reinterpret_cast<ConfigSection*>(node->value_);
+            options = s->config;
+            // define layers
+            Layer l = LayerOP::makeLayer();
+            LAYER_TYPE  layerType = LayerOP::parseLayerType(s->type);
+            node = node->next_;
+        }
+
+
 
         // free all nodeList;
         NodeOP::freeNodeList(sections, UtilFunc::freeConfigSection);
@@ -194,5 +212,8 @@ namespace NetworkOP{
         }
     }
 
+    parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType){
+        return nullptr;
+    }
 }
 
