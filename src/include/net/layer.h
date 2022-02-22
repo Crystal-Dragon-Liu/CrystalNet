@@ -47,6 +47,20 @@ struct Layer{
     void        (*backward) (Layer layer, Network network);
     void        (*update) (Layer layer, Network network);
     bool        batchNormalize;
+    int         height, width, channel;    //the height, width and channels in this layer.
+    int         filterNum; // num of filters.
+    bool        weightBinaryzation; // if this value is set to 1, weights would loaded with Binaryzation.
+    int         batchSize; // the size of each batch.
+    int         stride;     // stride of filter.
+    int         filterSize; // the size of each filter.
+    int         padSize; // padding size.
+
+    float*      weights;
+    float*      weights_update; // the derivative of error with respect to weight
+    float*      biases;
+    float*      biases_update;
+    int         numWeights;
+    int         numBiases;
     // bool        shortCut;
     // int         batch;
     // bool        forced;
@@ -88,7 +102,7 @@ namespace LayerOP{
     extern Layer makeLayer();
     extern void freeLayer(Layer);
     extern LAYER_TYPE parseLayerType(char* type);
+    extern void initializeWeightNormal(Layer l, int scaleSize, int size);
 }
-
 
 #endif

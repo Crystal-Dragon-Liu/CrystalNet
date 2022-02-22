@@ -5,6 +5,8 @@
 #include "include/Utils/tree.h"
 #include <map>
 #include <string>
+#include <vector>
+using LayerVector = std::vector<Layer*>;
 /*@brief  learning rate policy. */
 enum class LearningRatePolicy{
     CONSTANT, STEP, EXP, POLY, STEPS, SIG, RANDOM
@@ -24,7 +26,7 @@ typedef struct Network{
     // int                 subdivisions;
     // float               momentum;
     // float               decay;
-    Layer *             layers_; //! ptr
+    Layer*              layers_; //! ptr
     int                 timeSteps_;
     int                 noTruth_;
     int                 subdivisions_;
@@ -177,6 +179,8 @@ namespace NetworkOP{
     extern void                 initLrParam(Network* net, NodeList* options);
 
     extern parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType);
+
+    extern Layer               parseConvolutionalLayer(NodeList* options, SizeParams& params);
 }
 
 #endif

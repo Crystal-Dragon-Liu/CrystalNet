@@ -1,7 +1,14 @@
 #include "include/net/layer.h"
 #include <cstring>
+#include "include/Utils/utils.h"
 namespace LayerOP{
     void freeLayer(Layer){ return; }
+
+    void initializeWeightNormal(Layer l, int scaleSize, int size){
+        float scale = sqrt(2./(scaleSize));
+        for(int i = 0; i < size; ++i) 
+        l.weights[i] = scale*UtilFunc::randNormal();
+    }
 
     Layer makeLayer(){
         Layer l;

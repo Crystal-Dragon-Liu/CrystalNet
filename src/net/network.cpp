@@ -1,7 +1,9 @@
 #include "include/net/network.h"
 #include "include/Utils/common.h"
 #include "include/Utils/config_list.h"
+#include "include/net/activations.h"
 // #include "include/Utils/utils.h"
+
 
 #define CONFIG_FIND_I(...) ConfigIO::configFindToInt(__VA_ARGS__)
 #define CONFIG_FIND_F(...) ConfigIO::configFindToFloat(__VA_ARGS__)
@@ -213,7 +215,43 @@ namespace NetworkOP{
     }
 
     parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType){
+        switch (layerType)
+        {
+        case LAYER_TYPE::CONVOLUTIONAL:{
+            return parseConvolutionalLayer;
+        }
+        default:
+            break;
+        }
         return nullptr;
+    }
+
+    Layer               parseConvolutionalLayer(NodeList* options, SizeParams& params){
+        int n       =   CONFIG_FIND_I(options, "filters", 1); // number of filter.
+        int size    =   CONFIG_FIND_I(options, "size", 1); // size of filter.
+        int stride  =   CONFIG_FIND_I(options, "stride", 1);//  stride.
+        int pad     =   CONFIG_FIND_I(options, "pad", 0, true); //    padding the data or not
+        int padding =   CONFIG_FIND_I(options, "padding", 0, true); // length of padding, useless code.
+        if(pad){
+            padding = size / 2;
+        }
+        char*  activationStr     =   CONFIG_FIND_S(options, "activation", "logistic");
+        ACTIVATION activation = ACT_OP::getActivation(activationStr);
+        int batch, height, width, channel;
+        height = params.height;
+        width = params.width;
+        channel = params.channals;
+        batch = params.batch; // batch is always set to a fixed value.
+        if(!(height && width && channel)) // if one of these value is set to zero, params is invalid.
+            throw NetworkException("invalid input from former layer.");
+        int batchNormalzation = CONFIG_FIND_I(options, "batch_normalize", 0, true);
+        int binary = CONFIG_FIND_I(options, "binary", 0, true); // the binary operation for weights works or not.
+        int xnor = CONFIG_FIND_I(options, "xnor", 0, true); //  the binary operation for weights and inputs works or not.
+        //TODO build convolutional layer.
+        
+        
+        Layer l;
+        return l;
     }
 }
 

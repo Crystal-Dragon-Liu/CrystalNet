@@ -2,6 +2,7 @@
 #include <iostream>
 #include "include/Utils/common.h"
 #include "include/Utils/config_list.h"
+#include <cmath>
 namespace UtilFunc
 {
 
@@ -111,6 +112,31 @@ namespace UtilFunc
     void errorOccur(const char* msg){
         std::cout << "Error: " << "<" << msg << ">" << std::endl;
         exit(0);
+    }
+
+    float randNormal(){
+        static int haveSpare = 0;
+    static double rand1, rand2;
+
+    // z0和z1都用了，并不是只用z0或只用z1
+    if(haveSpare)
+    {
+        haveSpare = 0;
+        // z1 = sqrt(-2 * log(rand1)) * sin(rand2)
+        return sqrt(rand1) * sin(rand2);
+    }
+
+    haveSpare = 1;
+
+    // 产生0~1的随机数
+    rand1 = rand() / ((double) RAND_MAX);
+    if(rand1 < 1e-100) rand1 = 1e-100;  // 不能太小
+    rand1 = -2 * log(rand1);
+    // 产生0~2*PI之间的随机数
+    rand2 = (rand() / ((double) RAND_MAX)) * TWO_PI;
+
+    // z0 = sqrt(-2 * log(rand1)) * cos(rand2)
+    return sqrt(rand1) * cos(rand2);
     }
 
     int charToInt(const char* data){return atoi(data);}

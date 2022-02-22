@@ -2,6 +2,9 @@
 #define UTILS_H
 #include <string>
 #include <iostream>
+#include <exception>
+#define TWO_PI 6.2831853071795864769252866
+
 #define LOG(info) log__(__FILE__, __func__, __LINE__, info)
 
 inline void log__(std::string file_name, std::string func_name, int line, const char* info) {
@@ -24,7 +27,6 @@ void print__(const T& firstArg, const Types&... args) {
 
 #define PRINT(...) print__(__VA_ARGS__)
 
-
 namespace UtilFunc
 {
     
@@ -43,6 +45,23 @@ namespace UtilFunc
     extern int charToInt(const char* data);
     extern float charToFloat(const char* data);
     extern char* constCharToChar(const char* data);
+    // From http://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
+    extern float randNormal();
 }
+
+/*
+    customized exception class.
+*/
+class NetworkException: public std::exception{
+public:
+    NetworkException(): message_("Error."){}
+    NetworkException(const char* msg): message_(msg){message_ = std::string("Error: ") + message_;}
+    ~NetworkException() throw () {}
+    virtual const char* what() const throw() {
+        return message_.c_str();
+    }
+private:
+    std::string message_;
+};
 
 #endif
