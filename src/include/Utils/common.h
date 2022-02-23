@@ -84,6 +84,7 @@ typedef NetSimpleAlloc<float,  MyNetCAlloc> DataCitemAllocator;
 typedef NetSimpleAlloc<float*, MyNetCAlloc> DataC2DAllocator;
 typedef NetSimpleAlloc<size_t, MyNetCAlloc> SizeAllocator;
 typedef NetSimpleAlloc<int, MyNetCAlloc> IntAllocator;
+typedef NetSimpleAlloc<char, MyNetCAlloc> CharAllocator;
 
 #define ALLOC_FLOAT_PTR(n) DataCitemAllocator::allocate(n, sizeof(float))
 #define DEALLOC_FLOAT_PTR(...) DataCitemAllocator::deallocate(__VA_ARGS__)
@@ -91,7 +92,8 @@ typedef NetSimpleAlloc<int, MyNetCAlloc> IntAllocator;
 #define DEALLOC_INT_PTR(...) IntAllocator::deallocate(__VA_ARGS__)
 #define ALLOC_SIZE_PTR(n) SizeAllocator::allocate(n, sizeof(size_t))
 #define DEALLOC_SIZE_PTR(...) SizeAllocator::deallocate(__VA_ARGS__)
-
+#define ALLOC_CHAR_PTR(n) CharAllocator::allocate(n, sizeof(char))
+#define DEALLOC_CHAR_PTR(...) CharAllocator::deallocate(__VA_ARGS__)
 
 
 

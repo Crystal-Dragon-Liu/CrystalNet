@@ -1,14 +1,54 @@
 #include "include/net/layer.h"
 #include <cstring>
 #include "include/Utils/utils.h"
+#include "include/Utils/common.h"
 namespace LayerOP{
     void freeLayer(Layer){ return; }
 
-    void initializeWeightNormal(Layer l, int scaleSize, int size){
+    void initializeWeightNormal(Layer l, int scaleSize){
         float scale = sqrt(2./(scaleSize));
-        for(int i = 0; i < size; ++i) 
+        for(int i = 0; i < l.numWeights; ++i) 
         l.weights[i] = scale*UtilFunc::randNormal();
     }
+
+    void binaryWeightInit(Layer l, int weightSize, int scaleSize){
+        l.binaryWeights = ALLOC_FLOAT_PTR(weightSize);
+        l.cWeights      = ALLOC_CHAR_PTR(weightSize);
+        l.scales        = ALLOC_FLOAT_PTR(scaleSize);
+    }
+
+    void xnorInit(Layer l, int weightSize){
+        l.binaryWeights = ALLOC_FLOAT_PTR(weightSize);
+        l.binaryInput = ALLOC_FLOAT_PTR(l.numInputs*l.batchSize);
+    }
+
+    void batchNormalInit(Layer l, int n){
+        l.scales = ALLOC_FLOAT_PTR(n);
+        l.scaleUpdates = ALLOC_FLOAT_PTR(n);
+        for(int i = 0; i < n; i++){
+                l.scales[i] = 1;
+        }
+        l.mean = ALLOC_FLOAT_PTR(n);
+        l.variance = ALLOC_FLOAT_PTR(n);
+        l.meanDelta = ALLOC_FLOAT_PTR(n);
+        l.varianceDelta =ALLOC_FLOAT_PTR(n);
+        l.rollingMean = ALLOC_FLOAT_PTR(n);
+        l.rollingVariance = ALLOC_FLOAT_PTR(n);
+        l.x = ALLOC_FLOAT_PTR(l.batchSize * l.numOutputs);
+        l.xNorm = ALLOC_FLOAT_PTR(l.batchSize * l.numOutputs);
+    }
+
+    void adamInit(Layer l, int weightSize, int n){
+        l.adam = true;
+        l.adamM = ALLOC_FLOAT_PTR(weightSize);
+        l.adamV = ALLOC_FLOAT_PTR(weightSize);
+        l.adamBiasM = ALLOC_FLOAT_PTR(n);
+        l.adamScaleM = ALLOC_FLOAT_PTR(n);
+        l.adamBiasV = ALLOC_FLOAT_PTR(n);
+        l.adamScaleV = ALLOC_FLOAT_PTR(n);
+    }
+
+
 
     Layer makeLayer(){
         Layer l;

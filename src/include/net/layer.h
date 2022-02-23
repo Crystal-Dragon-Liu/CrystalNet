@@ -61,6 +61,46 @@ struct Layer{
     float*      biases_update;
     int         numWeights;
     int         numBiases;
+
+    // output 
+    int         outputHeight;
+    int         outputWidth;
+    int         outputChannel;
+    int         numOutputs;
+    int         numInputs;
+    float*      outputData;
+    float*      deltas;
+
+
+    //binary weight
+    float*      binaryWeights;
+    char*       cWeights;
+    float*      scales; // also used in BatchNormalization
+
+    //xnor 
+    float*      binaryInput;
+    
+    // batch normalization
+    float*      scaleUpdates;
+    float*      mean;
+    float*      variance;
+    float*      meanDelta;
+    float*      varianceDelta;
+    float*      rollingMean;
+    float*      rollingVariance;
+    float*      x;
+    float*      xNorm;
+
+    // adam
+    bool         adam;
+    float*      adamM;
+    float*      adamV;
+    float*      adamBiasM;
+    float*      adamScaleM;
+    float*      adamBiasV;
+    float*      adamScaleV;
+      
+
     // bool        shortCut;
     // int         batch;
     // bool        forced;
@@ -102,7 +142,13 @@ namespace LayerOP{
     extern Layer makeLayer();
     extern void freeLayer(Layer);
     extern LAYER_TYPE parseLayerType(char* type);
-    extern void initializeWeightNormal(Layer l, int scaleSize, int size);
+    extern void initializeWeightNormal(Layer l, int scaleSize);
+
+
+    extern void binaryWeightInit(Layer l, int weightSize, int scaleSize);
+    extern void xnorInit(Layer l, int weightSize);
+    extern void batchNormalInit(Layer l, int n);
+    extern void adamInit(Layer l, int weightSize, int n);
 }
 
 #endif
