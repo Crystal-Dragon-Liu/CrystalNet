@@ -3,7 +3,7 @@
 #include "include/Utils/config_list.h"
 #include "include/net/activations.h"
 // #include "include/Utils/utils.h"
-
+#include "include/net/convolutional_layer.h"
 
 #define CONFIG_FIND_I(...) ConfigIO::configFindToInt(__VA_ARGS__)
 #define CONFIG_FIND_F(...) ConfigIO::configFindToFloat(__VA_ARGS__)
@@ -29,13 +29,17 @@ namespace NetworkOP{
         return network;
     }
 
-    void freeNetwork(Network net){
-        DEALLOC_LAYER(net.layers_);
-        DEALLOC_SIZE_PTR(net.seen_);
+    void freeNetwork(Network* net){
+        //TODO delete layers.
+        for(int i = 0; i < net->totalLayerNum_;i++){
+            LayerOP::freeLayer(net->layers_[i]);
+        }
+        DEALLOC_LAYER(net->layers_);
+        DEALLOC_SIZE_PTR(net->seen_);
         // SizeAllocator::deallocate(net.seen_);
-        DEALLOC_FLOAT_PTR(net.cost_);
+        DEALLOC_FLOAT_PTR(net->cost_);
         // free the space for parameters
-        freeNetworkParam(&net);
+        freeNetworkParam(net);
     }
 
     void  freeStepParam(Network* net){
@@ -72,6 +76,7 @@ namespace NetworkOP{
         int count = 0;
         PRINT("layer     filters    size              input                output");
         while(node){
+            //TODO config the layer.
             params.index = count;
             PRINT(count);
             s = reinterpret_cast<ConfigSection*>(node->value_);
@@ -79,10 +84,15 @@ namespace NetworkOP{
             // define layers
             Layer l = LayerOP::makeLayer();
             LAYER_TYPE  layerType = LayerOP::parseLayerType(s->type);
+            parseNetLayerFunc f = getParseNetFunc(layerType);
             node = node->next_;
+            count++;
+            if(f == nullptr){
+                continue;
+            }
+            // l = f(options, params);
+            // net.layers_[count] = l;
         }
-
-
 
         // free all nodeList;
         NodeOP::freeNodeList(sections, UtilFunc::freeConfigSection);
@@ -220,10 +230,16 @@ namespace NetworkOP{
         case LAYER_TYPE::CONVOLUTIONAL:{
             return parseConvolutionalLayer;
         }
+        case LAYER_TYPE::CONNECTED:{
+            return parseFullyConnectedLayer;
+        }
         default:
             break;
         }
         return nullptr;
+    }
+    Layer               parseFullyConnectedLayer(NodeList* options, SizeParams& params){
+
     }
 
     Layer               parseConvolutionalLayer(NodeList* options, SizeParams& params){
@@ -248,9 +264,14 @@ namespace NetworkOP{
         int binary = CONFIG_FIND_I(options, "binary", 0, true); // the binary operation for weights works or not.
         int xnor = CONFIG_FIND_I(options, "xnor", 0, true); //  the binary operation for weights and inputs works or not.
         //TODO build convolutional layer.
-        
-        
-        Layer l;
+        ConvolutionalLayer l = CONVOLUTIONAL_OP::makeConvolutionalLayer(batch,height,width,channel,n,size,stride,padding,activation, batchNormalzation, binary, xnor, params.net.adam_);
+        l.flipped = CONFIG_FIND_I(options, "flipped", 0, true);
+        l.dot       = CONFIG_FIND_I(options, "dot", 0, true);
+        if(params.net.adam_){
+        l.B1 = params.net.b1_;
+        l.B2 = params.net.b2_;
+        l.eps = params.net.eps_;
+        }
         return l;
     }
 }

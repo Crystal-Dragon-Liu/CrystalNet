@@ -56,9 +56,9 @@ struct Layer{
     int         padSize; // padding size.
 
     float*      weights;
-    float*      weights_update; // the derivative of error with respect to weight
+    float*      weightUpdates; // the derivative of error with respect to weight
     float*      biases;
-    float*      biases_update;
+    float*      biasesUpdates;
     int         numWeights;
     int         numBiases;
 
@@ -99,7 +99,15 @@ struct Layer{
     float*      adamScaleM;
     float*      adamBiasV;
     float*      adamScaleV;
-      
+    float               B1;
+    float               B2;
+    float               eps;
+    
+    //workspace 
+    size_t      workspaceSize;
+
+    int         flipped;
+    int         dot;
 
     // bool        shortCut;
     // int         batch;

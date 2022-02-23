@@ -3,7 +3,45 @@
 #include "include/Utils/utils.h"
 #include "include/Utils/common.h"
 namespace LayerOP{
-    void freeLayer(Layer){ return; }
+    void freeLayer(Layer l){
+        if(l.type == LAYER_TYPE::DROPOUT){
+                //TODO delete rand.
+                return;
+        }
+        // weights
+        if(l.weights) DEALLOC_FLOAT_PTR(l.weights);
+        if(l.weightUpdates) DEALLOC_FLOAT_PTR(l.weightUpdates);
+        if(l.biases) DEALLOC_FLOAT_PTR(l.biases);
+        if(l.biasesUpdates) DEALLOC_FLOAT_PTR(l.biasesUpdates);
+        
+        // output
+        if(l.outputData) DEALLOC_FLOAT_PTR(l.outputData);
+        if(l.deltas) DEALLOC_FLOAT_PTR(l.deltas);
+        // binary weights
+        if(l.binaryWeights) DEALLOC_FLOAT_PTR(l.binaryWeights);
+        if(l.cWeights) DEALLOC_CHAR_PTR(l.cWeights);
+        if(l.scales) DEALLOC_FLOAT_PTR(l.scales);
+
+        // xnor
+        if(l.binaryInput) DEALLOC_FLOAT_PTR(l.binaryInput);
+        // batch normalization
+        if(l.scaleUpdates) DEALLOC_FLOAT_PTR(l.scaleUpdates);
+        if(l.mean) DEALLOC_FLOAT_PTR(l.mean);
+        if(l.variance) DEALLOC_FLOAT_PTR(l.variance);
+        if(l.meanDelta) DEALLOC_FLOAT_PTR(l.meanDelta);
+        if(l.varianceDelta) DEALLOC_FLOAT_PTR(l.varianceDelta);
+        if(l.rollingMean) DEALLOC_FLOAT_PTR(l.rollingMean);
+        if(l.rollingVariance) DEALLOC_FLOAT_PTR(l.rollingVariance);
+        if(l.x) DEALLOC_FLOAT_PTR(l.x);
+        if(l.xNorm) DEALLOC_FLOAT_PTR(l.xNorm);
+        // adam
+        if(l.adamM) DEALLOC_FLOAT_PTR(l.adamM);
+        if(l.adamV) DEALLOC_FLOAT_PTR(l.adamV);
+        if(l.adamBiasM) DEALLOC_FLOAT_PTR(l.adamBiasM);
+        if(l.adamScaleM) DEALLOC_FLOAT_PTR(l.adamScaleM);
+        if(l.adamBiasV) DEALLOC_FLOAT_PTR(l.adamBiasV);
+        if(l.adamScaleV) DEALLOC_FLOAT_PTR(l.adamScaleV);
+    }
 
     void initializeWeightNormal(Layer l, int scaleSize){
         float scale = sqrt(2./(scaleSize));
@@ -55,6 +93,37 @@ namespace LayerOP{
         l.forward = nullptr;
         l.backward = nullptr;
         l.update = nullptr;
+        //weights
+        l.weights = nullptr;
+        l.weightUpdates = nullptr;
+        l.biases = nullptr;
+        l.biasesUpdates = nullptr;
+        //output
+        l.outputData = nullptr;
+        l.deltas = nullptr;
+        //binary weights
+        l.binaryWeights = nullptr;
+        l.cWeights = nullptr;
+        l.scales = nullptr;
+        // xnor
+        l.binaryInput = nullptr;
+        // batch normalization
+        l.scaleUpdates = nullptr;
+        l.mean = nullptr;
+        l.variance = nullptr;
+        l.meanDelta = nullptr;
+        l.varianceDelta = nullptr;
+        l.rollingMean = nullptr;
+        l.rollingVariance = nullptr;
+        l.x= nullptr;
+        l.xNorm = nullptr;
+        // adam
+        l.adamM = nullptr;
+        l.adamV = nullptr;
+        l.adamBiasM = nullptr;
+        l.adamScaleM = nullptr;
+        l.adamBiasV = nullptr;
+        l.adamScaleV = nullptr;
         return l;
     }
 

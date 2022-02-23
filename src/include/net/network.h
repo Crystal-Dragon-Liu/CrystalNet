@@ -142,7 +142,7 @@ namespace NetworkOP{
         @brief  free space from Network.
         @param  network
     */
-    extern void                 freeNetwork(Network net);
+    extern void                 freeNetwork(Network* net);
 
     /*
         @brief free parameters of learning rate policy
@@ -181,6 +181,7 @@ namespace NetworkOP{
     extern parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType);
 
     extern Layer               parseConvolutionalLayer(NodeList* options, SizeParams& params);
+    extern Layer               parseFullyConnectedLayer(NodeList* options, SizeParams& params);
 }
 
 #endif

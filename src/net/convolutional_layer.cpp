@@ -1,10 +1,11 @@
 #include "include/net/convolutional_layer.h"
 #include "include/Utils/common.h"
 #include "include/net/network.h"
+#include "include/Utils/utils.h"
 namespace CONVOLUTIONAL_OP{
     ConvolutionalLayer makeConvolutionalLayer(int batch, int h, int w, int c, int n, int size, int stride, int padding, ACTIVATION activation, int batch_normalize, int binary, int xnor, int adam){
         int i;
-        ConvolutionalLayer l;
+        ConvolutionalLayer l = LayerOP::makeLayer();
         l.type = LAYER_TYPE::CONVOLUTIONAL; // type of layer.
         l.height = h;
         l.width = w;
@@ -18,9 +19,9 @@ namespace CONVOLUTIONAL_OP{
         l.batchNormalize = batch_normalize;
         // initialize weights. num of weights = channels * filterNum * filterSize* filterSize.
         l.weights = ALLOC_FLOAT_PTR(c*n*size*size);
-        l.weights_update = ALLOC_FLOAT_PTR(c*n*size*size);
+        l.weightUpdates = ALLOC_FLOAT_PTR(c*n*size*size);
         l.biases = ALLOC_FLOAT_PTR(n);
-        l.biases_update = ALLOC_FLOAT_PTR(n);
+        l.biasesUpdates = ALLOC_FLOAT_PTR(n);
         l.numWeights = c*n*size*size;
         l.numBiases  = n;
         LayerOP::initializeWeightNormal(l, c*size*size);
@@ -40,9 +41,19 @@ namespace CONVOLUTIONAL_OP{
         l.forward  = forwardConvLayer;
         l.backward = backwardConvLayer;
         l.update  = updateConvLayer;
-        // TODO continue to initialize params.
-        
 
+        if(binary) LayerOP::binaryWeightInit(l, c*n*size*size, n);
+        if(xnor) LayerOP::xnorInit(l, c*n*size*size);
+        if(batch_normalize) LayerOP::batchNormalInit(l, n);
+        if(adam) LayerOP::adamInit(l, c*n*size*size, n);
+
+        //TODO GPU
+
+        // initialize size of workspace
+        l.workspaceSize = getWorkSpaceSize(l);
+        l.activation = activation;
+        PRINT("conv ", n, size, "x", size, "/", stride, w, "x", h, "x", c, "-> ", l.outputWidth, "x", l.outputHeight, "x", l.outputChannel);
+        return l;
     }
     int                 getConvOutputHeight(Layer l){
         return (l.height + l.padSize * 2  - l.filterSize) / l.stride + 1;

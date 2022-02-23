@@ -144,5 +144,5 @@ TEST(BasicListTest, Test6){
 	Network net = NetworkOP::parseNetworkConfig(filename.data());
 	// Network net = NetworkOP::makeNetwork(6);
 	// free network
-    NetworkOP::freeNetwork(net);
+    NetworkOP::freeNetwork(&net);
 }
