@@ -24,7 +24,7 @@ namespace CONVOLUTIONAL_OP{
         l.biasesUpdates = ALLOC_FLOAT_PTR(n);
         l.numWeights = c*n*size*size;
         l.numBiases  = n;
-        LayerOP::initializeWeightNormal(l, c*size*size);
+        LayerOP::initializeWeightNormal(&l, c*size*size);
         // calculate the size of output by convolutional layer.
         int outputWidth = getConvOutputWidth(l);
         int outputHeight = getConvOutputHeight(l);
@@ -42,10 +42,10 @@ namespace CONVOLUTIONAL_OP{
         l.backward = backwardConvLayer;
         l.update  = updateConvLayer;
 
-        if(binary) LayerOP::binaryWeightInit(l, c*n*size*size, n);
-        if(xnor) LayerOP::xnorInit(l, c*n*size*size);
-        if(batch_normalize) LayerOP::batchNormalInit(l, n);
-        if(adam) LayerOP::adamInit(l, c*n*size*size, n);
+        if(binary) LayerOP::binaryWeightInit(&l, c*n*size*size, n);
+        if(xnor) LayerOP::xnorInit(&l, c*n*size*size);
+        if(batch_normalize) LayerOP::batchNormalInit(&l, n);
+        if(adam) LayerOP::adamInit(&l, c*n*size*size, n);
 
         //TODO GPU
 

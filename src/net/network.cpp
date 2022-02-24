@@ -82,7 +82,7 @@ namespace NetworkOP{
             s = reinterpret_cast<ConfigSection*>(node->value_);
             options = s->config;
             // define layers
-            Layer l = LayerOP::makeLayer();
+            
             LAYER_TYPE  layerType = LayerOP::parseLayerType(s->type);
             parseNetLayerFunc f = getParseNetFunc(layerType);
             node = node->next_;
@@ -90,8 +90,8 @@ namespace NetworkOP{
             if(f == nullptr){
                 continue;
             }
-            // l = f(options, params);
-            // net.layers_[count] = l;
+            Layer l = f(options, params);
+            net.layers_[count] = l;
         }
 
         // free all nodeList;

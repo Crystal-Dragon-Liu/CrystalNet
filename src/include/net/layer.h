@@ -150,13 +150,13 @@ namespace LayerOP{
     extern Layer makeLayer();
     extern void freeLayer(Layer);
     extern LAYER_TYPE parseLayerType(char* type);
-    extern void initializeWeightNormal(Layer l, int scaleSize);
+    extern void initializeWeightNormal(Layer* l, int scaleSize);
 
 
-    extern void binaryWeightInit(Layer l, int weightSize, int scaleSize);
-    extern void xnorInit(Layer l, int weightSize);
-    extern void batchNormalInit(Layer l, int n);
-    extern void adamInit(Layer l, int weightSize, int n);
+    extern void binaryWeightInit(Layer* l, int weightSize, int scaleSize);
+    extern void xnorInit(Layer* l, int weightSize);
+    extern void batchNormalInit(Layer *l, int n);
+    extern void adamInit(Layer* l, int weightSize, int n);
 }
 
 #endif

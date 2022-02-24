@@ -134,6 +134,7 @@ TEST(BasicListTest, DISABLED_Test5){
 	free(val);
 }
 
+
 /*
 	Test list:
 	1. Create a NodeList to store the network configuration
@@ -145,4 +146,10 @@ TEST(BasicListTest, Test6){
 	// Network net = NetworkOP::makeNetwork(6);
 	// free network
     NetworkOP::freeNetwork(&net);
+
 }
+
+
+/*
+	Test list:
+*/
