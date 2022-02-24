@@ -64,6 +64,8 @@ typedef struct Network{
     // lr = base_lr * power(batch_num/burn_in, pwr)
     int                 burnIn_; 
     float               power_;
+
+    float               clip_;
     // float*              output;
     // LearningRatePolicy  policy;
     

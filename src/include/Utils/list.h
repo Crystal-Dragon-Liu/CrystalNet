@@ -109,6 +109,13 @@ namespace NodeOP
 		@brief	generate a 2d array from NodeList,
 				each value_ of Node obj in NodeList is similar with std::string.*/
 	extern void** generateArrayfromList(NodeList* l);
+
+	/*
+		@brief	print all the options not used by users. 
+				if options should be used, system will call the CONFIG_FIND_XX functions.
+	*/
+
+	extern void  printUnusedOptions(NodeList* l);
 }
 
 	

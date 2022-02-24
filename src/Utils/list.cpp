@@ -20,6 +20,18 @@ void printAllNodes(NodeList* nodeList, callbackPrintNodes callback){
 		currentNode = currentNode->next_;
 	}
 }
+
+void  printUnusedOptions(NodeList* l){
+	Node *n = l->front_;
+    while(n){
+        KeyValuePair *p = reinterpret_cast<KeyValuePair *>(n->value_);
+        if(!p->used_){
+            fprintf(stderr, "Unused field: '%s = %s'\n", p->key_, p->value_);
+        }
+        n = n->next_;
+    }
+}
+
 }
 
 

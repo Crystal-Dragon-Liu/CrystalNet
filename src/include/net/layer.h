@@ -109,6 +109,19 @@ struct Layer{
     int         flipped;
     int         dot;
 
+    //convolutional layer
+    float       clip;
+    bool        truth;
+    bool        onlyForward;
+    bool        stopBackward;
+    bool        noDataLoad;
+    bool        noScaleLoad;
+    float       learningRateScale;
+    float       smooth;
+
+
+
+
     // bool        shortCut;
     // int         batch;
     // bool        forced;

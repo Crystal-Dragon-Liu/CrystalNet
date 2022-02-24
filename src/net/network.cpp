@@ -91,8 +91,26 @@ namespace NetworkOP{
                 continue;
             }
             Layer l = f(options, params);
+            // no idea what for.
+            l.clip = net.clip_;
+            l.truth = CONFIG_FIND_I(options, "truth", 0, true);
+            l.onlyForward = CONFIG_FIND_I(options, "onlyforward", 0, true);
+            l.stopBackward = CONFIG_FIND_I(options, "stopbackward", 0, true);
+            l.noDataLoad = CONFIG_FIND_I(options, "dontload", 0, true);
+            l.noScaleLoad = CONFIG_FIND_I(options, "dontloadscales", 0, true);
+            l.learningRateScale = CONFIG_FIND_F(options, "learning_rate", 1, true);
+            l.smooth = CONFIG_FIND_F(options, "smooth", 0, true);
             net.layers_[count] = l;
+            NodeOP::printUnusedOptions(options);
+            if(l.workspaceSize >workplaceSize) workplaceSize = l.workspaceSize;
+            if(node){
+                params.height = l.outputHeight;
+                params.width = l.outputWidth;
+                params.channals = l.outputChannel;
+                params.inputs = l.numOutputs;
+            }
         }
+        //TODO process output layer.
 
         // free all nodeList;
         NodeOP::freeNodeList(sections, UtilFunc::freeConfigSection);
