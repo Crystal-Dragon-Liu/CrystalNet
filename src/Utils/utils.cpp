@@ -139,6 +139,15 @@ namespace UtilFunc
     return sqrt(rand1) * cos(rand2);
     }
 
+    float randUniform(float min, float max){
+        if(max < min){
+        float swap = min;
+        min = max;
+        max = swap;
+        }
+        return ((float)rand()/RAND_MAX * (max - min)) + min;
+    }
+
     int charToInt(const char* data){return atoi(data);}
     float charToFloat(const char* data){ return atof(data); }
     char* constCharToChar(const char* data){ return const_cast<char*>(data);}

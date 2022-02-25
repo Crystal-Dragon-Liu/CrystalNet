@@ -68,7 +68,7 @@ struct Layer{
     int         outputChannel;
     int         numOutputs;
     int         numInputs;
-    float*      outputData;
+    float*      outputData; // the output data with dimension(l.out_h * l.out_w * l.out_c * l.batch)
     float*      deltas;
 
 
@@ -163,8 +163,12 @@ namespace LayerOP{
     extern Layer makeLayer();
     extern void freeLayer(Layer);
     extern LAYER_TYPE parseLayerType(char* type);
+    // initialize weights 
     extern void initializeWeightNormal(Layer* l, int scaleSize);
+    extern void initializeWeightUniform(Layer* l, int scaleSize, int weightSize);
 
+    // initialize biases
+    extern void zeroBiases(Layer* l, int biasesSize);
 
     extern void binaryWeightInit(Layer* l, int weightSize, int scaleSize);
     extern void xnorInit(Layer* l, int weightSize);

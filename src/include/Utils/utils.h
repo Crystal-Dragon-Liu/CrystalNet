@@ -47,6 +47,9 @@ namespace UtilFunc
     extern char* constCharToChar(const char* data);
     // From http://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
     extern float randNormal();
+    // Generate random numbers evenly distributed in (min, Max) interval
+    extern float randUniform(float min, float max);
+
 }
 
 /*

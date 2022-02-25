@@ -66,6 +66,21 @@ typedef struct Network{
     float               power_;
 
     float               clip_;
+
+    //output
+    int                 numOutputs_;
+    float*              outputData_;
+    int                 truth_; // no idea what this stands for
+    float*              truthData_;
+
+
+    //input
+    float*              inputData_; // input_ stands for the input data of current layer, this kind of data could be from the output of former layer in network.
+
+
+    // workspace
+    float*              workspace_; // workspace_ stands for a temp space for calculating and updating parameters.
+
     // float*              output;
     // LearningRatePolicy  policy;
     
@@ -184,6 +199,11 @@ namespace NetworkOP{
 
     extern Layer               parseConvolutionalLayer(NodeList* options, SizeParams& params);
     extern Layer               parseFullyConnectedLayer(NodeList* options, SizeParams& params);
+
+    /*
+        @brief get the layer of output.
+    */
+    extern Layer                getOutputLayer(Network net);
 }
 
 #endif

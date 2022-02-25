@@ -141,7 +141,7 @@ TEST(BasicListTest, DISABLED_Test5){
 	2. test method named parseNetworkConfig.
 */
 TEST(BasicListTest, Test6){
-	std::string filename("/root/test_data/yolo.cfg");
+	std::string filename("/root/test_data/test.cfg");
 	Network net = NetworkOP::parseNetworkConfig(filename.data());
 	// Network net = NetworkOP::makeNetwork(6);
 	// free network

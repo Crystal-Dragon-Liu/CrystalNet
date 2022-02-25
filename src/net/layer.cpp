@@ -50,6 +50,21 @@ namespace LayerOP{
         l->weights[i] = scale*UtilFunc::randNormal();
     }
 
+    void initializeWeightUniform(Layer* l, int scaleSize, int weightSize){
+        PRINT("initializing weights");
+        float scale = sqrt(2./scaleSize);
+        for(int i = 0; i < weightSize;i++){
+            l->weights[i] = scale*UtilFunc::randUniform(-1, 1);
+        }
+    }
+
+    void zeroBiases(Layer* l, int biasesSize){
+        PRINT("initializing bias with 0.");
+        for(int i = 0; i < biasesSize; ++i){
+        l->biases[i] = 0;
+        }
+    }
+
     void binaryWeightInit(Layer* l, int weightSize, int scaleSize){
         PRINT("setting parameters for binary weights");
         l->binaryWeights = ALLOC_FLOAT_PTR(weightSize);

@@ -26,6 +26,10 @@ namespace NetworkOP{
         network.cost_ = ALLOC_FLOAT_PTR(1);
         network.steps_ = nullptr;
         network.scales_ = nullptr;
+        network.outputData_ = nullptr;
+        network.inputData_ = nullptr;
+        network.truthData_ = nullptr;
+        network.workspace_ = nullptr;
         return network;
     }
 
@@ -34,10 +38,14 @@ namespace NetworkOP{
         for(int i = 0; i < net->totalLayerNum_;i++){
             LayerOP::freeLayer(net->layers_[i]);
         }
-        DEALLOC_LAYER(net->layers_);
-        DEALLOC_SIZE_PTR(net->seen_);
+        if(net->layers_) DEALLOC_LAYER(net->layers_);
+        if(net->seen_) DEALLOC_SIZE_PTR(net->seen_);
         // SizeAllocator::deallocate(net.seen_);
-        DEALLOC_FLOAT_PTR(net->cost_);
+        if(net->cost_) DEALLOC_FLOAT_PTR(net->cost_);
+        // if(net->outputData_) DEALLOC_FLOAT_PTR(net->outputData_);
+        if(net->inputData_) DEALLOC_FLOAT_PTR(net->inputData_);
+        if(net->truthData_) DEALLOC_FLOAT_PTR(net->truthData_);
+        if(net->workspace_) DEALLOC_FLOAT_PTR(net->workspace_);
         // free the space for parameters
         freeNetworkParam(net);
     }
@@ -111,9 +119,19 @@ namespace NetworkOP{
             }
         }
         //TODO process output layer.
-
+        Layer outputLayer = getOutputLayer(net);
+        net.numOutputs_ = outputLayer.numOutputs;
+        net.truth_ = outputLayer.numOutputs;
+        if(net.layers_[net.totalLayerNum_-1].truth) net.truth_ = net.layers_[net.totalLayerNum_-1].truth;
+        net.outputData_ = outputLayer.outputData;
+        net.inputData_  = ALLOC_FLOAT_PTR(net.numInputs_*net.batch_);
+        net.truthData_  =  ALLOC_FLOAT_PTR(net.truth_*net.batch_);
         // free all nodeList;
         NodeOP::freeNodeList(sections, UtilFunc::freeConfigSection);
+        //TODO GPU
+        if(workplaceSize){
+            net.workspace_ = reinterpret_cast<float*>(calloc(1, workplaceSize));
+        }
         return net;
     }
 
@@ -257,7 +275,12 @@ namespace NetworkOP{
         return nullptr;
     }
     Layer               parseFullyConnectedLayer(NodeList* options, SizeParams& params){
-
+        int output = CONFIG_FIND_I(options, "output", 1);
+        char*  activationStr     =   CONFIG_FIND_S(options, "activation", "logistic");
+        ACTIVATION activation = ACT_OP::getActivation(activationStr);
+        int batchNormalzation = CONFIG_FIND_I(options, "batch_normalize", 0, true);
+        Layer l;
+        return l;
     }
 
     Layer               parseConvolutionalLayer(NodeList* options, SizeParams& params){
@@ -291,6 +314,16 @@ namespace NetworkOP{
         l.eps = params.net.eps_;
         }
         return l;
+    }
+
+    Layer                getOutputLayer(Network net){
+        int i;
+        for(i = net.totalLayerNum_ -1; i>=0; i--){
+            if(net.layers_[i].type != LAYER_TYPE::COST){
+                break;
+            }
+        }
+        return net.layers_[i];
     }
 }
 
