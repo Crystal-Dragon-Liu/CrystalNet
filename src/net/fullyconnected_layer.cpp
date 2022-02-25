@@ -3,6 +3,7 @@
 #include "include/net/network.h"
 #include "include/Utils/utils.h"
 namespace FullyConnectedLayer_OP{
+
     FullyConnectedLayer makeFullyConnectedLayer(int batch, int inputs, int outputs, ACTIVATION activation, int batch_normalize){
         FullyConnectedLayer l = LayerOP::makeLayer();
         l.type = LAYER_TYPE::CONNECTED;

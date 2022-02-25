@@ -4,6 +4,7 @@
 #include "include/net/activations.h"
 // #include "include/Utils/utils.h"
 #include "include/net/convolutional_layer.h"
+#include "include/net/fullyconnected_layer.h"
 
 #define CONFIG_FIND_I(...) ConfigIO::configFindToInt(__VA_ARGS__)
 #define CONFIG_FIND_F(...) ConfigIO::configFindToFloat(__VA_ARGS__)
@@ -279,7 +280,7 @@ namespace NetworkOP{
         char*  activationStr     =   CONFIG_FIND_S(options, "activation", "logistic");
         ACTIVATION activation = ACT_OP::getActivation(activationStr);
         int batchNormalzation = CONFIG_FIND_I(options, "batch_normalize", 0, true);
-        Layer l;
+        Layer l = FullyConnectedLayer_OP::makeFullyConnectedLayer(params.batch, params.inputs, output, activation, batchNormalzation);
         return l;
     }
 
