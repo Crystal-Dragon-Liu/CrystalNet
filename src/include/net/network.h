@@ -197,8 +197,8 @@ namespace NetworkOP{
 
     extern parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType);
 
-    extern Layer               parseConvolutionalLayer(NodeList* options, SizeParams& params);
-    extern Layer               parseFullyConnectedLayer(NodeList* options, SizeParams& params);
+    extern Layer                parseConvolutionalLayer(NodeList* options, SizeParams& params);
+    extern Layer                parseFullyConnectedLayer(NodeList* options, SizeParams& params);
 
     /*
         @brief get the layer of output.

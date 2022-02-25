@@ -181,12 +181,12 @@ namespace ImageFunc{
     }
 
     void   freeRawData(float* data){
-        dataCitemAllocator::deallocate(data);
+        DataCitemAllocator::deallocate(data);
     }
     
     float*  makeRawData(size_t len){
         if(len == 0) return nullptr;
-        auto data = dataCitemAllocator::allocate(len, sizeof(float));
+        auto data = DataCitemAllocator::allocate(len, sizeof(float));
         return data;
     }
 }

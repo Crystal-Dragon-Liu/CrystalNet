@@ -140,15 +140,23 @@ TEST(BasicListTest, DISABLED_Test5){
 	1. Create a NodeList to store the network configuration
 	2. test method named parseNetworkConfig.
 */
-TEST(BasicListTest, Test6){
+TEST(BasicListTest, DISABLED_Test6){
 	std::string filename("/root/test_data/test.cfg");
 	Network net = NetworkOP::parseNetworkConfig(filename.data());
 	// Network net = NetworkOP::makeNetwork(6);
 	// free network
     NetworkOP::freeNetwork(&net);
-
 }
 
+/*
+	Test list:
+	1. Create a network for classifying cifar dataset.
+*/
+TEST(BasicListTest, Test7){
+	std::string fileName("/root/test_data/cifar_small.cfg");
+	Network net = NetworkOP::parseNetworkConfig(fileName.data());
+	NetworkOP::freeNetwork(&net);
+}
 
 /*
 	Test list:

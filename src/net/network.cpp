@@ -19,7 +19,7 @@ typedef NetSimpleAlloc<Layer, MyNetCAlloc> LayerAllocator;
 
 
 namespace NetworkOP{
-    Network makeNetwork(int n){
+    Network                 makeNetwork(int n){
         Network network;
         network.totalLayerNum_ = n;
         network.layers_ = ALLOC_LAYER(network.totalLayerNum_);
@@ -34,7 +34,7 @@ namespace NetworkOP{
         return network;
     }
 
-    void freeNetwork(Network* net){
+    void                    freeNetwork(Network* net){
         //TODO delete layers.
         for(int i = 0; i < net->totalLayerNum_;i++){
             LayerOP::freeLayer(net->layers_[i]);
@@ -51,14 +51,14 @@ namespace NetworkOP{
         freeNetworkParam(net);
     }
 
-    void  freeStepParam(Network* net){
+    void                    freeStepParam(Network* net){
         if(net->steps_ != nullptr) DEALLOC_INT_PTR(net->steps_);
         if(net->scales_ != nullptr) DEALLOC_FLOAT_PTR(net->scales_);
     }
 
-    void  freeNetworkParam(Network* net){freeStepParam(net);}
+    void                    freeNetworkParam(Network* net){freeStepParam(net);}
 
-    Network parseNetworkConfig(const char* fileName){
+    Network                 parseNetworkConfig(const char* fileName){
         // read network configuration.
         NodeList* sections = ConfigIO::readModelConfig(fileName);
         Node* node = sections->front_; // only [net] config would be loaded.
@@ -136,12 +136,12 @@ namespace NetworkOP{
         return net;
     }
 
-    bool checkNetworkConfig(ConfigSection* section){
+    bool                    checkNetworkConfig(ConfigSection* section){
         return (strcmp(section->type, "[net]")==0
             || strcmp(section->type, "[network]")==0);
     }
 
-    void loadNetworkCommonConfig(NodeList* options, Network* net){
+    void                    loadNetworkCommonConfig(NodeList* options, Network* net){
         using namespace std;
         cout << "<---- loading common parameters ---->" << endl;
         net->batch_ =           CONFIG_FIND_I(options,"batch", 1);
@@ -186,7 +186,7 @@ namespace NetworkOP{
         net->maxBatches_ =        CONFIG_FIND_I(options, "max_batches", 0);
     }
 
-    LearningRatePolicy parseLearningRatePolicy(char* policy){
+    LearningRatePolicy      parseLearningRatePolicy(char* policy){
         if (strcmp(policy, "random")==0) return LearningRatePolicy::RANDOM;
         if (strcmp(policy, "poly")==0) return LearningRatePolicy::POLY;
         if (strcmp(policy, "constant")==0) return LearningRatePolicy::CONSTANT;
@@ -198,11 +198,12 @@ namespace NetworkOP{
         return LearningRatePolicy::CONSTANT;
     }
 
-    void               stepInitialize(Network* net, NodeList* options){
+    void                    stepInitialize(Network* net, NodeList* options){
         net->step_ = CONFIG_FIND_I(options, "step", 1);
         net->scale_ = CONFIG_FIND_I(options, "scale", 1);
     }
-    void                 stepsInitialize(Network* net, NodeList* options){
+
+    void                    stepsInitialize(Network* net, NodeList* options){
         char *l = ConfigIO::configFind(options, "steps");   
         char *p = ConfigIO::configFind(options, "scales");   
         if(!l || !p) UtilFunc::errorOccur("STEPS policy must have steps and scales in cfg file");
@@ -227,17 +228,20 @@ namespace NetworkOP{
         net->numSteps_ = n;
     }
 
-    void                 expInitialize(Network* net, NodeList* options){
+    void                    expInitialize(Network* net, NodeList* options){
         net->gamma_ = CONFIG_FIND_F(options, "gamma", 1);
     }
 
-    void                 sigInitialize(Network* net, NodeList* options){
+    void                    sigInitialize(Network* net, NodeList* options){
         net->gamma_ = CONFIG_FIND_F(options, "gamma", 1);
         net->step_  = CONFIG_FIND_F(options, "step", 1);
     }
-    void                 polyInitialize(Network* net, NodeList*options){}
-    void                 randomInitialize(Network*net, NodeList*options){}
-    void                 initializePolicy(LearningRatePolicy policy){
+    
+    void                    polyInitialize(Network* net, NodeList*options){}
+    
+    void                    randomInitialize(Network*net, NodeList*options){}
+    
+    void                    initializePolicy(LearningRatePolicy policy){
         switch (policy)
         {
         case LearningRatePolicy::STEP:
@@ -248,7 +252,8 @@ namespace NetworkOP{
             break;
         }
     }
-    void                 initLrParam(Network* net, NodeList* options){
+    
+    void                    initLrParam(Network* net, NodeList* options){
         switch (net->learningRatePolicy_)
         {
         case LearningRatePolicy::STEP:{stepInitialize(net, options);break;}
@@ -261,7 +266,7 @@ namespace NetworkOP{
         }
     }
 
-    parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType){
+    parseNetLayerFunc       getParseNetFunc(LAYER_TYPE layerType){
         switch (layerType)
         {
         case LAYER_TYPE::CONVOLUTIONAL:{
@@ -275,7 +280,8 @@ namespace NetworkOP{
         }
         return nullptr;
     }
-    Layer               parseFullyConnectedLayer(NodeList* options, SizeParams& params){
+    
+    Layer                   parseFullyConnectedLayer(NodeList* options, SizeParams& params){
         int output = CONFIG_FIND_I(options, "output", 1);
         char*  activationStr     =   CONFIG_FIND_S(options, "activation", "logistic");
         ACTIVATION activation = ACT_OP::getActivation(activationStr);
@@ -284,7 +290,7 @@ namespace NetworkOP{
         return l;
     }
 
-    Layer               parseConvolutionalLayer(NodeList* options, SizeParams& params){
+    Layer                   parseConvolutionalLayer(NodeList* options, SizeParams& params){
         int n       =   CONFIG_FIND_I(options, "filters", 1); // number of filter.
         int size    =   CONFIG_FIND_I(options, "size", 1); // size of filter.
         int stride  =   CONFIG_FIND_I(options, "stride", 1);//  stride.
@@ -317,7 +323,7 @@ namespace NetworkOP{
         return l;
     }
 
-    Layer                getOutputLayer(Network net){
+    Layer                   getOutputLayer(Network net){
         int i;
         for(i = net.totalLayerNum_ -1; i>=0; i--){
             if(net.layers_[i].type != LAYER_TYPE::COST){

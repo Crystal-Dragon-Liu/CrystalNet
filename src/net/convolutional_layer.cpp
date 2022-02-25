@@ -55,21 +55,21 @@ namespace CONVOLUTIONAL_OP{
         PRINT("conv ", n, size, "x", size, "/", stride, w, "x", h, "x", c, "-> ", l.outputWidth, "x", l.outputHeight, "x", l.outputChannel);
         return l;
     }
+    
     int                 getConvOutputHeight(Layer l){
         return (l.height + l.padSize * 2  - l.filterSize) / l.stride + 1;
     }
+    
     int                 getConvOutputWidth(Layer l){
         return  (l.width + l.padSize * 2 - l.filterSize ) / l.stride + 1;
     }
-    void                forwardConvLayer(Layer layer, Network network){
-
-    }
-    void                backwardConvLayer(Layer layer, Network network){
-
-    }
-    void                updateConvLayer(Layer layer, Network network){
-
-    }
+    
+    void                forwardConvLayer(Layer layer, Network network){}
+    
+    void                backwardConvLayer(Layer layer, Network network){}
+    
+    void                updateConvLayer(Layer layer, Network network){}
+    
     size_t              getWorkSpaceSize(Layer l){
         return static_cast<size_t>(l.outputHeight * l.outputWidth * l.channel * l.filterSize * l.filterSize * sizeof(float));
     }

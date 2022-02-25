@@ -3,7 +3,7 @@
 #include "include/Utils/utils.h"
 #include "include/Utils/common.h"
 namespace LayerOP{
-    void freeLayer(Layer l){
+    void        freeLayer(Layer l){
         if(l.type == LAYER_TYPE::DROPOUT){
                 //TODO delete rand.
                 return;
@@ -43,14 +43,14 @@ namespace LayerOP{
         if(l.adamScaleV) DEALLOC_FLOAT_PTR(l.adamScaleV);
     }
 
-    void initializeWeightNormal(Layer* l, int scaleSize){
+    void        initializeWeightNormal(Layer* l, int scaleSize){
         PRINT("initializing weights");
         float scale = sqrt(2./(scaleSize));
         for(int i = 0; i < l->numWeights; ++i) 
         l->weights[i] = scale*UtilFunc::randNormal();
     }
 
-    void initializeWeightUniform(Layer* l, int scaleSize, int weightSize){
+    void        initializeWeightUniform(Layer* l, int scaleSize, int weightSize){
         PRINT("initializing weights");
         float scale = sqrt(2./scaleSize);
         for(int i = 0; i < weightSize;i++){
@@ -58,27 +58,27 @@ namespace LayerOP{
         }
     }
 
-    void zeroBiases(Layer* l, int biasesSize){
+    void        zeroBiases(Layer* l, int biasesSize){
         PRINT("initializing bias with 0.");
         for(int i = 0; i < biasesSize; ++i){
         l->biases[i] = 0;
         }
     }
 
-    void binaryWeightInit(Layer* l, int weightSize, int scaleSize){
+    void        binaryWeightInit(Layer* l, int weightSize, int scaleSize){
         PRINT("setting parameters for binary weights");
         l->binaryWeights = ALLOC_FLOAT_PTR(weightSize);
         l->cWeights      = ALLOC_CHAR_PTR(weightSize);
         l->scales        = ALLOC_FLOAT_PTR(scaleSize);
     }
 
-    void xnorInit(Layer* l, int weightSize){
+    void        xnorInit(Layer* l, int weightSize){
         PRINT("setting parameters for binary input and weights");
         l->binaryWeights = ALLOC_FLOAT_PTR(weightSize);
         l->binaryInput = ALLOC_FLOAT_PTR(l->numInputs*l->batchSize);
     }
 
-    void batchNormalInit(Layer *l, int n){
+    void        batchNormalInit(Layer *l, int n){
         PRINT("setting parameters for BatchNormalization");
         l->scales = ALLOC_FLOAT_PTR(n);
         l->scaleUpdates = ALLOC_FLOAT_PTR(n);
@@ -95,7 +95,7 @@ namespace LayerOP{
         l->xNorm = ALLOC_FLOAT_PTR(l->batchSize * l->numOutputs);
     }
 
-    void adamInit(Layer* l, int weightSize, int n){
+    void        adamInit(Layer* l, int weightSize, int n){
         PRINT("setting parameters for Adam.");
         l->adam = true;
         l->adamM = ALLOC_FLOAT_PTR(weightSize);
@@ -106,9 +106,7 @@ namespace LayerOP{
         l->adamScaleV = ALLOC_FLOAT_PTR(n);
     }
 
-
-
-    Layer makeLayer(){
+    Layer       makeLayer(){
         Layer l;
         l.forward = nullptr;
         l.backward = nullptr;
@@ -147,7 +145,7 @@ namespace LayerOP{
         return l;
     }
 
-    LAYER_TYPE parseLayerType(char* type){
+    LAYER_TYPE  parseLayerType(char* type){
             if (strcmp(type, "[shortcut]")==0) return LAYER_TYPE::SHORTCUT;
     if (strcmp(type, "[crop]")==0) return LAYER_TYPE::CROP;
     if (strcmp(type, "[cost]")==0) return LAYER_TYPE::COST;

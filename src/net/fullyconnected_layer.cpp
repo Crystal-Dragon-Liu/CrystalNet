@@ -44,15 +44,9 @@ namespace FullyConnectedLayer_OP{
 
     }
 
-    void                forwardFullyConnectedLayer(Layer layer, Network network){
-
-    }
-
-    void                backwardFullyConnectedLayer(Layer layer, Network network){
-
-    }
-
-    void                updateFullyConnectedLayer(Layer layer, Network network){
-
-    }
+    void                forwardFullyConnectedLayer(Layer layer, Network network){}
+    
+    void                backwardFullyConnectedLayer(Layer layer, Network network){}
+    
+    void                updateFullyConnectedLayer(Layer layer, Network network){}
 }

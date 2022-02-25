@@ -20,11 +20,11 @@ enum class ACTIVATION{
 
 namespace ACT_OP{
     /* @brief get the function enum class through funcName.*/
-    extern ACTIVATION getActivation(const char* funcName);
+    extern ACTIVATION   getActivation(const char* funcName);
      /* @brief get the function name  through ACTIVATION.*/
-    extern char* getActivationStr(ACTIVATION act);
+    extern char*        getActivationStr(ACTIVATION act);
     /* @brief return the result of activation through VALUE passed by users and the ACTIVATION enum */
-    extern float activate(float input, ACTIVATION act);
+    extern float        activate(float input, ACTIVATION act);
 
 }
 
