@@ -1,0 +1,6 @@
+classes=10
+train  = /root/test_data/data/cifar/train.list
+valid  = /root/test_data/data/cifar/test.list
+labels = /root/test_data/data/cifar/labels.txt
+backup = /root/test_data/data/cifar/backup/
+top=2
