@@ -50,6 +50,9 @@ namespace UtilFunc
     // Generate random numbers evenly distributed in (min, Max) interval
     extern float randUniform(float min, float max);
 
+    //@brief  initialize data through CPU. stride is set to 1 by default.
+    extern void initDataByCPU(int eleNum, float ALPHA, float* data, int stride = 1);
+
 }
 
 /*

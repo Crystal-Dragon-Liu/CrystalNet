@@ -64,7 +64,23 @@ namespace CONVOLUTIONAL_OP{
         return  (l.width + l.padSize * 2 - l.filterSize ) / l.stride + 1;
     }
     
-    void                forwardConvLayer(Layer layer, Network network){}
+    void                forwardConvLayer(Layer l, Network network){
+        int out_h = l.outputHeight;
+        int out_w = l.outputWidth;
+        // initialize outputs by zero.
+        UtilFunc::initDataByCPU(l.numOutputs*l.batchSize, 0, l.outputData);
+        // TODO binary op for inputs and weights??
+        int m = l.filterNum;
+        int k = l.filterSize*l.filterSize*l.channel; // size of each kernel in this Conv layer
+        int n = out_h* out_w;
+
+        float* weights = l.weights;
+        float* workspace = network.workspace_;
+        float* outputData = l.outputData;
+        for(int i = 0; i < l.batchSize; ++i){
+            //Convolutional Algorithm for each batch.
+        }
+    }
     
     void                backwardConvLayer(Layer layer, Network network){}
     

@@ -23,7 +23,7 @@ WARNING:This library is not available for commercial use!!! these source codes a
    ```
   <font color="lightblue">1.2</font>  written weights of Networks into .crystal files.  
 
-  ## <font color="orange">2. Network ✅</font>
+  ## <font color="orange">2. Network </font>
   
   <font color="lightblue">2.1</font>  create a Network and initialize it involving some works about allocating memory for parameters. the interface is like:
   ```cpp
@@ -60,14 +60,14 @@ WARNING:This library is not available for commercial use!!! these source codes a
   2.5.2 predict the segmentation result  
   2.5.3 predict the bounding box for object detection
 
-  ## <font color="orange">3. Data ✅</font>
+  ## <font color="orange">3. Data</font>
   <font color="lightblue">3.1</font> load image data and store it into Image obj.
   
   <font color="lightblue">3.2</font> create a Matrix obj.
 
   <font color="lightblue">3.2</font> release Matrix obj.
 
-  ## <font color="orange">4. Linear Algorithm ✅</font>
+  ## <font color="orange">4. Linear Algorithm with GPUs</font>
 
 
 

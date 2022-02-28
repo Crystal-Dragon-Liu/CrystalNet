@@ -152,4 +152,10 @@ namespace UtilFunc
     float charToFloat(const char* data){ return atof(data); }
     char* constCharToChar(const char* data){ return const_cast<char*>(data);}
 
+
+    void initDataByCPU(int eleNum, float ALPHA, float* data, int stride){
+        for(int i = 0; i < eleNum; i++){
+            data[i*stride] = ALPHA;
+        }
+    }
 }
