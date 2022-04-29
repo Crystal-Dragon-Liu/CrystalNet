@@ -79,6 +79,7 @@ namespace CONVOLUTIONAL_OP{
         float* outputData = l.outputData;
         for(int i = 0; i < l.batchSize; ++i){
             //Convolutional Algorithm for each batch.
+			// run img2col????
         }
     }
     

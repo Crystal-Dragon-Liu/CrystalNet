@@ -20,9 +20,9 @@ void im2ColCPU(float* batchData, int channels, int height, int width, int kernel
             for(int w = 0; w < widthCol; w++){
                 int imRow = heightOffset + h * stride; // initial row index when we accessing image.
                 int imCol = widthOffset + w*stride; // initial col index when we accessing image.
-                int colIndex = (c*heightCol + h) * widthCol + w; //TODO what this means???????
+                int colIndex = (c*heightCol + h) * widthCol + w; // find the index of dataCol to fill.
+
             }
         }
     }
-
 }
