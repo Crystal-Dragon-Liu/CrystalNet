@@ -21,8 +21,23 @@ void im2ColCPU(float* batchData, int channels, int height, int width, int kernel
                 int imRow = heightOffset + h * stride; // initial row index when we accessing image.
                 int imCol = widthOffset + w*stride; // initial col index when we accessing image.
                 int colIndex = (c*heightCol + h) * widthCol + w; // find the index of dataCol to fill.
-
+                dataCol[colIndex] = getPixelIm2col(batchData, 
+                height, width, channels, 
+                imRow, imCol, channelOffset, pad);
             }
         }
     }
+}
+
+
+float getPixelIm2col(float* img_data, int img_width, int img_height, int img_channels, int index_row, int index_col,int index_c, int padding){
+    float a = 1.0;
+    //! index_row is  the row index on padded image.
+    index_row -= padding;
+    index_col -= padding;
+    if(index_row <= 0 || index_col <=0 // consider the index at upper left corner of image.
+        || index_row >= img_height || index_col >= img_width) // consider the index at lower right corner of image.
+        return 0;
+    // index_c * img_height * img_width + img_width* index_row + index_col
+    return img_data[index_col + img_width*(index_row + img_height*index_c)];
 }

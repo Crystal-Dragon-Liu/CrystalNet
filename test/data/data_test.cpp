@@ -154,7 +154,7 @@ TEST(BasicListTest, DISABLED_Test6){
 */
 TEST(BasicListTest, Test7){
 	// std::string fileName("/root/test_data/cifar_small.cfg");
-	std::string fileName("/home/CrystalNet/cfg/classifier_model.cfg");
+	std::string fileName("/Users/crystal-dragon-lyb/CrystalNet/cfg/classifier_model.cfg");
 	
 	Network net = NetworkOP::parseNetworkConfig(fileName.data());
 	NetworkOP::freeNetwork(&net);

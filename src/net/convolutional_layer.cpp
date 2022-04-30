@@ -2,6 +2,7 @@
 #include "include/Utils/common.h"
 #include "include/net/network.h"
 #include "include/Utils/utils.h"
+#include "include/algorithm/im2col.h"
 namespace CONVOLUTIONAL_OP{
     ConvolutionalLayer makeConvolutionalLayer(int batch, int h, int w, int c, int n, int size, int stride, int padding, ACTIVATION activation, int batch_normalize, int binary, int xnor, int adam){
         int i;
@@ -78,8 +79,12 @@ namespace CONVOLUTIONAL_OP{
         float* workspace = network.workspace_;
         float* outputData = l.outputData;
         for(int i = 0; i < l.batchSize; ++i){
-            //Convolutional Algorithm for each batch.
-			// run img2col????
+            // Convolutional Algorithm for each batch.
+			// run img2col
+            //network.inputData is initialized by forward_network.
+            // workspace contains one re-ordered image data with 1-dimenion
+            // [l.channel * l.kernelSize* l.kernelSize, l.outputWidth * l.outputHeight]
+            im2ColCPU(network.inputData_, l.channel, l.height, l.width, l.filterSize, l.stride, l.padSize, workspace);
         }
     }
     
