@@ -180,6 +180,22 @@ namespace ImageFunc{
 		return resized; //! dont forget to delete it.
     }
 
+    Image* resizeImageMin(Image* og_data, size_t min){
+        size_t w = og_data->getWidth();
+        size_t h = og_data->getHeight();
+        if(w < h){
+            h = (h*min)/w;
+            w = min;
+        }
+        else{
+            w = (w*min)/h;
+            h = min;
+        }
+        if(w == og_data->getWidth() && h == og_data->getHeight()) return og_data;
+        Image* resized = resizeImage(og_data, w, h);
+        return resized;
+    }
+
     void   freeRawData(float* data){
         DataCitemAllocator::deallocate(data);
     }

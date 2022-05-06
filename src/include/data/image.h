@@ -89,6 +89,8 @@ namespace ImageFunc{
     */
     extern Image* resizeImage(Image* og_data, size_t w, size_t h);
 
+    extern Image* resizeImageMin(Image* og_data, size_t min);
+
     /* @brief print the size of image. */
     extern void   printShape(Image* data);
 
