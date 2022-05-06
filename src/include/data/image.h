@@ -63,7 +63,7 @@ namespace ImageFunc{
         @param h:           height of image.
         @param channel:     channel of 
     */
-    extern Image* loadImage(const char* fileName, size_t w, size_t h, size_t channel);
+    extern Image* loadImage(const char* fileName, size_t w = 0, size_t h = 0, size_t channel = 3);
 
     /*
         @brief  load a image by calling the func from stb_image lib.

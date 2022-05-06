@@ -83,20 +83,18 @@ namespace NetworkOP{
         size_t workplaceSize = 0;
         node = node->next_;
         int count = 0;
-        PRINT("layer     filters    size              input                output");
         while(node){
             //TODO config the layer.
             params.index = count;
-            PRINT(count);
+            PRINT_LOG("loading layer ", count, "..");
             s = reinterpret_cast<ConfigSection*>(node->value_);
             options = s->config;
             // define layers
-            
             LAYER_TYPE  layerType = LayerOP::parseLayerType(s->type);
             parseNetLayerFunc f = getParseNetFunc(layerType);
-            node = node->next_;
-            count++;
             if(f == nullptr){
+                PRINT_LOG("unknown layer ", s->type);
+                node = node->next_;
                 continue;
             }
             Layer l = f(options, params);
@@ -112,13 +110,17 @@ namespace NetworkOP{
             net.layers_[count] = l;
             NodeOP::printUnusedOptions(options);
             if(l.workspaceSize >workplaceSize) workplaceSize = l.workspaceSize;
+            node = node->next_;
+            count++; 
             if(node){
                 params.height = l.outputHeight;
                 params.width = l.outputWidth;
                 params.channals = l.outputChannel;
                 params.inputs = l.numOutputs;
             }
+            // PRINT("-- finished to load layer ", count, "..");
         }
+        PRINT_LOG("finished to load all layers.");
         //TODO process output layer.
         Layer outputLayer = getOutputLayer(net);
         net.numOutputs_ = outputLayer.numOutputs;
@@ -143,7 +145,7 @@ namespace NetworkOP{
 
     void                    loadNetworkCommonConfig(NodeList* options, Network* net){
         using namespace std;
-        cout << "<---- loading common parameters ---->" << endl;
+        PRINT_LOG("<---loading common parameters!--->");
         net->batch_ =           CONFIG_FIND_I(options,"batch", 1);
         net->learningRate_ =    CONFIG_FIND_F(options, "learning_rate", .001);
         net->decay_ =           CONFIG_FIND_F(options, "decay", .0001);
@@ -184,6 +186,7 @@ namespace NetworkOP{
         // TODO parse learning rate policy and initialize involved parameters.
         initLrParam(net, options);
         net->maxBatches_ =        CONFIG_FIND_I(options, "max_batches", 0);
+        PRINT_LOG("<---finished to load common parameters!--->");
     }
 
     LearningRatePolicy      parseLearningRatePolicy(char* policy){

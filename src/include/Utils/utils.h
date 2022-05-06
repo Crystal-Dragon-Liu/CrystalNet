@@ -9,10 +9,12 @@
 
 inline void log__(std::string file_name, std::string func_name, int line, const char* info) {
     std::string out = file_name + " " + func_name + ", line " + std::to_string(line) + ": ";
-    std::cout << out << info << std::endl;
+    std::cout << "-- " << out << info << std::endl;
 }
 
 inline void print__() { std::cout << std::endl; };
+inline void printwith__() { std::cout << std::endl; };
+inline void printblue() {std::cout << std::endl;}
 
 /**
  * TODO change the output to a thread safe method
@@ -25,7 +27,23 @@ void print__(const T& firstArg, const Types&... args) {
     print__(args...);
 }
 
+template<typename T, typename... Types>
+void printwith__(const T& firstArg, const Types&... args) {
+    std::cout  << "-- " << firstArg << " ";
+    print__(args...);
+}
+
+template<typename T, typename... Types>
+void printblue(const T& firstArg, const Types&... args) {
+    std::cout << " \033[34m" << firstArg << "\033[0m ";
+    printblue(args...);
+}
+
 #define PRINT(...) print__(__VA_ARGS__)
+#define PRINT_LOG(...) printwith__(__VA_ARGS__)
+#define PRINT_BLUE(...) printblue(__VA_ARGS__)
+
+
 
 namespace UtilFunc
 {

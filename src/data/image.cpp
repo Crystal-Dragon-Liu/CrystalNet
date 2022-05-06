@@ -107,11 +107,11 @@ namespace ImageFunc{
         printShape(new_image);
         auto new_image_data = new_image->getData();
         // switch the position of pixel.
-        for(size_t k = 0; k < c; k++){
-            for(size_t j = 0; j < h; j++){
-                for(size_t i = 0; i < w; i++){
-                    size_t dst_index = i + w*j + w*h*k;
-                    size_t src_index = k + c*i + c*w*j;
+        for(int k = 0; k < c; k++){
+            for(int j = 0; j < h; j++){
+                for(int i = 0; i < w; i++){
+                    int dst_index = i + w*j + w*h*k;
+                    int src_index = k + c*i + c*w*j;
                     new_image_data[dst_index] = static_cast<float>(data[src_index])/255.;
                     // new_image.data[dst_index] = (float)data[src_index]/255.;
                 }

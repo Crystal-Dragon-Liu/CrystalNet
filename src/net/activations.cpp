@@ -23,8 +23,9 @@ namespace ACT_OP{
     return ACTIVATION::RELU;
     }
 
-    char* getActivationStr(ACTIVATION act){
-        return "";
+    std::string  getActivationStr(ACTIVATION act){
+        std::string a = "INVALID_ACTIVATION";
+        return a;
     }
 
     float activate(float input, ACTIVATION act){

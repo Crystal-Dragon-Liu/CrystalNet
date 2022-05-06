@@ -17,7 +17,7 @@ namespace GEMM_ALGO{
                 float* A, int lda, float* B, int ldb,
                 float BETA, 
                 float*C, int ldc){
-                    gemm_cpu(transposeA, transposeB, M, N, K, ALPHA, A, lda, B, ldb, BETA, C, ldc);
+        gemm_cpu(transposeA, transposeB, M, N, K, ALPHA, A, lda, B, ldb, BETA, C, ldc);
     }
 
     void gemm_cpu(bool transposeA, bool transposeB, int M, int N, int K,
@@ -31,10 +31,10 @@ namespace GEMM_ALGO{
                         C[i*ldc + j]*= BETA;
                     }
                 }
-                if(!transposeA && !transposeB){
-                    gemm_nn(M, N, K, ALPHA, A, lda, B, ldb, BETA, C, ldc);
-                }
-
+        if(!transposeA && !transposeB){
+            gemm_nn(M, N, K, ALPHA, A, lda, B, ldb, BETA, C, ldc);
+        }
+        //TODO gemm_tn, gemm_tt, gemm_nt
     }
                 
     void gemm_nn(int M, int N, int K,
@@ -42,6 +42,14 @@ namespace GEMM_ALGO{
                 float* A, int lda, float* B, int ldb,
                 float BETA, 
                 float*C, int ldc){
-                    return;
+        int i, j, k;
+        for(i = 0; i < M; i++){
+            for(k = 0; k < K; k++){
+                float A_part = ALPHA * A[lda* i + k];
+                for(j = 0; j < N; j++){
+                    C[i*ldc + j] += A_part* B[ldb*k+j];
                 }
+            }
+        }
+    }
 }

@@ -44,14 +44,14 @@ namespace LayerOP{
     }
 
     void        initializeWeightNormal(Layer* l, int scaleSize){
-        PRINT("initializing weights");
+        PRINT_LOG("initializing weights");
         float scale = sqrt(2./(scaleSize));
         for(int i = 0; i < l->numWeights; ++i) 
         l->weights[i] = scale*UtilFunc::randNormal();
     }
 
     void        initializeWeightUniform(Layer* l, int scaleSize, int weightSize){
-        PRINT("initializing weights");
+        PRINT_LOG("initializing weights");
         float scale = sqrt(2./scaleSize);
         for(int i = 0; i < weightSize;i++){
             l->weights[i] = scale*UtilFunc::randUniform(-1, 1);
@@ -59,27 +59,27 @@ namespace LayerOP{
     }
 
     void        zeroBiases(Layer* l, int biasesSize){
-        PRINT("initializing bias with 0.");
+        PRINT_LOG("initializing bias with 0.");
         for(int i = 0; i < biasesSize; ++i){
         l->biases[i] = 0;
         }
     }
 
     void        binaryWeightInit(Layer* l, int weightSize, int scaleSize){
-        PRINT("setting parameters for binary weights");
+        PRINT_LOG("setting parameters for binary weights");
         l->binaryWeights = ALLOC_FLOAT_PTR(weightSize);
         l->cWeights      = ALLOC_CHAR_PTR(weightSize);
         l->scales        = ALLOC_FLOAT_PTR(scaleSize);
     }
 
     void        xnorInit(Layer* l, int weightSize){
-        PRINT("setting parameters for binary input and weights");
+        PRINT_LOG("setting parameters for binary input and weights");
         l->binaryWeights = ALLOC_FLOAT_PTR(weightSize);
         l->binaryInput = ALLOC_FLOAT_PTR(l->numInputs*l->batchSize);
     }
 
     void        batchNormalInit(Layer *l, int n){
-        PRINT("setting parameters for BatchNormalization");
+        PRINT_LOG("setting parameters for BatchNormalization");
         l->scales = ALLOC_FLOAT_PTR(n);
         l->scaleUpdates = ALLOC_FLOAT_PTR(n);
         for(int i = 0; i < n; i++){
@@ -96,7 +96,7 @@ namespace LayerOP{
     }
 
     void        adamInit(Layer* l, int weightSize, int n){
-        PRINT("setting parameters for Adam.");
+        PRINT_LOG("setting parameters for Adam.");
         l->adam = true;
         l->adamM = ALLOC_FLOAT_PTR(weightSize);
         l->adamV = ALLOC_FLOAT_PTR(weightSize);

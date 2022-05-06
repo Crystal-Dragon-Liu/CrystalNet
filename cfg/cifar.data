@@ -1,6 +1,6 @@
 classes=10
-train  = /root/test_data/data/cifar/train.list
-valid  = /root/test_data/data/cifar/test.list
-labels = /root/test_data/data/cifar/labels.txt
-backup = /root/test_data/data/cifar/backup/
+train  = /Users/crystal-dragon-lyb/CrystalNetDataset/cifar/train.list
+valid  = /Users/crystal-dragon-lyb/CrystalNetDataset/cifar/test.list
+labels = /Users/crystal-dragon-lyb/CrystalNetDataset/cifar/labels.txt
+backup = /Users/crystal-dragon-lyb/CrystalNetDataset/cifar/backup/
 top=2

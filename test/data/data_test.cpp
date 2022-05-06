@@ -152,11 +152,43 @@ TEST(BasicListTest, DISABLED_Test6){
 	Test list:
 	1. Create a network for classifying cifar dataset.
 */
-TEST(BasicListTest, Test7){
+TEST(BasicListTest, DISABLED_Test7){
 	// std::string fileName("/root/test_data/cifar_small.cfg");
 	std::string fileName("/Users/crystal-dragon-lyb/CrystalNet/cfg/classifier_model.cfg");
 	
 	Network net = NetworkOP::parseNetworkConfig(fileName.data());
+	NetworkOP::freeNetwork(&net);
+}
+
+/*
+	Test list:
+	1. Read cifar.data
+	2. Read an image to Read.
+*/
+
+TEST(BasicListTest, Test8){
+	// Read cifar.data.
+	std::string fileName("/Users/crystal-dragon-lyb/CrystalNet/cfg/cifar.data");
+	NodeList* dataConfig = ConfigIO::readDataAndCfg(fileName);
+	if(!dataConfig){
+		LOG("failed to load configuration.");
+		exit(0);
+	}
+	NodeOP::printAllNodes(dataConfig, UtilFunc::printkyp);
+
+	// Read an image.
+	std::string imgPath("/Users/crystal-dragon-lyb/CrystalNetDataSet/cifar/test/0_cat.png");
+	Image* new_image = ImageFunc::loadImage(imgPath.data());
+
+	// Read a network
+	std::string modelPath("/Users/crystal-dragon-lyb/CrystalNet/cfg/classifier_test.cfg");
+	Network net = NetworkOP::parseNetworkConfig(modelPath.data());
+	
+
+
+	// release allocated space 
+	NodeOP::freeNodeList(dataConfig, UtilFunc::freeKyp);
+	ImageFunc::freeImage(new_image);
 	NetworkOP::freeNetwork(&net);
 }
 

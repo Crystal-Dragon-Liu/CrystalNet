@@ -81,7 +81,8 @@ namespace ConfigIO{
             row_num++;
             if(readConfig<NetAlloc>(line, list) == 0) return nullptr;
         }
-        std::cout << "done" << std::endl;
+        LOG("finished to load data config.");
+        // std::cout << "" << std::endl;
         dataFile.close();
         return list;
     }
@@ -146,7 +147,8 @@ namespace ConfigIO{
         char* value = configFind(l, key);
         if(value){return (*Action)(value);}
         if(!quiet)
-            std::cout << key << " -> using default: " << def << "\n";
+            // std::cout << key << " -> using default: " << def << "\n";
+            PRINT_LOG(key, " -> using default: ", def);
         return def;
     }
 

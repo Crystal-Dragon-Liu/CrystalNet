@@ -3,9 +3,9 @@
 #include "include/net/network.h"
 #include "include/Utils/utils.h"
 #include "include/algorithm/im2col.h"
+#include "include/algorithm/gemm.h"
 namespace CONVOLUTIONAL_OP{
     ConvolutionalLayer makeConvolutionalLayer(int batch, int h, int w, int c, int n, int size, int stride, int padding, ACTIVATION activation, int batch_normalize, int binary, int xnor, int adam){
-        int i;
         ConvolutionalLayer l = LayerOP::makeLayer();
         l.type = LAYER_TYPE::CONVOLUTIONAL; // type of layer.
         l.height = h;
@@ -53,7 +53,7 @@ namespace CONVOLUTIONAL_OP{
         // initialize size of workspace
         l.workspaceSize = getWorkSpaceSize(l);
         l.activation = activation;
-        PRINT("conv ", n, size, "x", size, "/", stride, w, "x", h, "x", c, "-> ", l.outputWidth, "x", l.outputHeight, "x", l.outputChannel);
+        PRINT_BLUE("conv ", n, size, "x", size, "/", stride, w, "x", h, "x", c, "-> ", l.outputWidth, "x", l.outputHeight, "x", l.outputChannel);
         return l;
     }
     
@@ -83,8 +83,14 @@ namespace CONVOLUTIONAL_OP{
 			// run img2col
             //network.inputData is initialized by forward_network.
             // workspace contains one re-ordered image data with 1-dimenion
-            // [l.channel * l.kernelSize* l.kernelSize, l.outputWidth * l.outputHeight]
+            // a -> [l.channel * l.kernelSize* l.kernelSize, l.outputWidth * l.outputHeight]
+            // b -> [l.filterNum, l.channel * l.kernelSize * l.kernelSize]
             im2ColCPU(network.inputData_, l.channel, l.height, l.width, l.filterSize, l.stride, l.padSize, workspace);
+            GEMM_ALGO::gemm(false, false, m, n, k, 1, weights, k, workspace, n, 1, outputData, n);
+            // update the pointer of outputData.
+            outputData += m*n;
+            // update the pointer of batchData.
+            network.inputData_ += l.channel * l.height * l.width;
         }
     }
     

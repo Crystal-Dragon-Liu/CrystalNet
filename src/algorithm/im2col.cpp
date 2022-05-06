@@ -31,7 +31,6 @@ void im2ColCPU(float* batchData, int channels, int height, int width, int kernel
 
 
 float getPixelIm2col(float* img_data, int img_width, int img_height, int img_channels, int index_row, int index_col,int index_c, int padding){
-    float a = 1.0;
     //! index_row is  the row index on padded image.
     index_row -= padding;
     index_col -= padding;
