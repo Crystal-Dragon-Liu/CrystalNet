@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <exception>
+#include <vector>
 #define TWO_PI 6.2831853071795864769252866
 
 #define LOG(info) log__(__FILE__, __func__, __LINE__, info)
@@ -68,9 +69,12 @@ namespace UtilFunc
     // Generate random numbers evenly distributed in (min, Max) interval
     extern float randUniform(float min, float max);
 
-    //@brief  initialize data through CPU. stride is set to 1 by default.
-    extern void initDataByCPU(int eleNum, float ALPHA, float* data, int stride = 1);
+    //@brief  	initialize data through CPU. stride is set to 1 by default.
+    extern void initDataByCPU(int eleNum, float ALPHA, std::vector<float>* data, int stride = 1);
 
+
+	//@brief	calculate the length of array
+	extern int	getLengthOfArray(float* data);
 }
 
 /*

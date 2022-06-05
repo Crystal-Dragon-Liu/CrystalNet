@@ -15,10 +15,12 @@ void** generateArrayfromList(NodeList* l){
 	
 void printAllNodes(NodeList* nodeList, callbackPrintNodes callback){
 	Node* currentNode = nodeList->front_;
+	PRINT("<--- Data Configuration --->");
 	while(currentNode){
 		(*callback)(currentNode->value_);
 		currentNode = currentNode->next_;
 	}
+	PRINT("<--- Data Configuration --->");
 }
 
 void  printUnusedOptions(NodeList* l){

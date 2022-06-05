@@ -48,10 +48,11 @@ namespace UtilFunc
 
     void printkyp(void* data){
         KeyValuePair* pKeyValue = reinterpret_cast<KeyValuePair*>(data);
-        printCharArray(pKeyValue->key_);
-        std::cout << ": ";
-        printCharArray(pKeyValue->value_);
-        std::cout << std::endl;
+        // printCharArray(pKeyValue->key_);
+        // std::cout << ": ";
+        // printCharArray(pKeyValue->value_);
+        // std::cout << std::endl;
+        PRINT(pKeyValue->key_, ": ", pKeyValue->value_);
     }
 
     void printConfigSection(void* data){
@@ -125,7 +126,7 @@ namespace UtilFunc
         // z1 = sqrt(-2 * log(rand1)) * sin(rand2)
         return sqrt(rand1) * sin(rand2);
     }
-
+    
     haveSpare = 1;
 
     // 产生0~1的随机数
@@ -152,10 +153,14 @@ namespace UtilFunc
     float charToFloat(const char* data){ return atof(data); }
     char* constCharToChar(const char* data){ return const_cast<char*>(data);}
 
-
-    void initDataByCPU(int eleNum, float ALPHA, float* data, int stride){
+    void initDataByCPU(int eleNum, float ALPHA, std::vector<float>* data, int stride){
         for(int i = 0; i < eleNum; i++){
-            data[i*stride] = ALPHA;
+            (*data)[i*stride] = ALPHA;
         }
     }
+
+	
+	int getLengthOfArray(float* data){
+		return static_cast<int>(sizeof(data));
+	}			
 }

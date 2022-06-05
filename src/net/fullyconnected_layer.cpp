@@ -18,15 +18,15 @@ namespace FullyConnectedLayer_OP{
         l.outputWidth = 1;
         l.outputChannel = outputs;
         // set output data.
-        l.outputData = ALLOC_FLOAT_PTR(batch * outputs);
-        l.deltas = ALLOC_FLOAT_PTR(batch * outputs);
+        l.outputData = new std::vector<float>(batch * outputs);
+        l.deltas = new std::vector<float>(batch * outputs);
         // set parameters for update.
-        l.weightUpdates = ALLOC_FLOAT_PTR(inputs * outputs);
-        l.biasesUpdates = ALLOC_FLOAT_PTR(outputs);
+        l.weightUpdates = new std::vector<float>(inputs * outputs);
+        l.biasesUpdates = new std::vector<float>(outputs);
         
         // set parameters
-        l.weights = ALLOC_FLOAT_PTR(inputs* outputs);
-        l.biases = ALLOC_FLOAT_PTR(outputs);
+        l.weights = new std::vector<float>(inputs* outputs);
+        l.biases = new std::vector<float>(outputs);
 
         // set forward, backward and update function.
         l.forward = forwardFullyConnectedLayer;
@@ -41,7 +41,6 @@ namespace FullyConnectedLayer_OP{
         l.activation = activation;
         fprintf(stderr, "connected                            %4d  ->  %4d\n", inputs, outputs);
         return l;
-
     }
 
     void                forwardFullyConnectedLayer(Layer layer, Network network){}

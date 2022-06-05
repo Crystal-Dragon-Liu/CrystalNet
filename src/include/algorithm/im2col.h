@@ -1,9 +1,10 @@
 #ifndef IM2COL_H
 #define IM2COL_H
 
+#include <vector>
 //From Berkeley Vision's Caffe!
 //https://github.com/BVLC/caffe/blob/master/LICENSE
-extern void im2ColCPU(float* batchData, int channels, int height, int width, int kernelSize, int stride, int pad, float* dataCol);
+extern void im2ColCPU(std::vector<float>* batchData, int channels, int height, int width, int kernelSize, int stride, int pad, std::vector<float>* dataCol);
 
 /*
  * @brief this method are implemented for the method im2col
@@ -15,6 +16,7 @@ extern void im2ColCPU(float* batchData, int channels, int height, int width, int
  *              index_channel:  the index of channel
  * 				padding:		the length we expand on image with zero.
  */
- extern float getPixelIm2col(float* img_data, int img_width, int img_height, int img_channels, int index_row, int index_col, int index_c, int padding);
+extern float getPixelIm2col(std::vector<float>* img_data, int img_width, int img_height, int img_channels, int index_row, int index_col, int index_c, int padding);
+
  
 #endif

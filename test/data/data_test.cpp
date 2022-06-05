@@ -176,18 +176,24 @@ TEST(BasicListTest, Test8){
 	}
 	NodeOP::printAllNodes(dataConfig, UtilFunc::printkyp);
 
+		// Read a network
+	std::string modelPath("/Users/crystal-dragon-lyb/CrystalNet/cfg/classifier_test.cfg");
+	Network net = NetworkOP::parseNetworkConfig(modelPath.data());
+
 	// Read an image.
 	std::string imgPath("/Users/crystal-dragon-lyb/CrystalNetDataSet/cifar/test/0_cat.png");
 	Image* new_image = ImageFunc::loadImage(imgPath.data());
-
-	// Read a network
-	std::string modelPath("/Users/crystal-dragon-lyb/CrystalNet/cfg/classifier_test.cfg");
-	Network net = NetworkOP::parseNetworkConfig(modelPath.data());
-	
-
-
+	int size = net.width_;
+	Image* resized = ImageFunc::resizeImageMin(new_image, size);
+	ImageFunc::printShape(resized);
+	float* X = resized->getData();
+	//	float* prediction = NetworkOP::predictNetwork(net, X);
+	int x_len = UtilFunc::getLengthOfArray(X);
+	PRINT("input data [2351] -> ", X[2351]);
+	PRINT("input data's length -> ", x_len);
 	// release allocated space 
 	NodeOP::freeNodeList(dataConfig, UtilFunc::freeKyp);
+	if(resized->getData() != new_image->getData()) ImageFunc::freeImage(resized);
 	ImageFunc::freeImage(new_image);
 	NetworkOP::freeNetwork(&net);
 }

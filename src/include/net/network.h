@@ -8,17 +8,21 @@
 #include <vector>
 using LayerVector = std::vector<Layer*>;
 /*@brief  learning rate policy. */
-enum class LearningRatePolicy{
+enum class LEARNING_RATE_POLICY{
     CONSTANT, STEP, EXP, POLY, STEPS, SIG, RANDOM
 };
 
-
-
+enum class NETWORK_MODE{
+    TRAIN,
+    INFER
+};
+// using namespace std;
 
 typedef struct Network{
     int                 totalLayerNum_;
     int                 batch_; /// the batch size of image set.
-    size_t*             seen_; /// num of image which have been processed. //! ptr
+    // !size_t*             seen_;
+    std::vector<size_t>*     seen_; /// num of image which have been processed. //! ptr
     float               learningRate_;
     float               momentum_;
     float               decay_;
@@ -47,40 +51,42 @@ typedef struct Network{
     float               saturation_;
     float               exposure_;
     float               hue_;
-    LearningRatePolicy  learningRatePolicy_;
+    LEARNING_RATE_POLICY  learningRatePolicy_;
     // parameters for policy STEP, SIG
     int                 step_;
     float               scale_;
     // parameters for policy STEPS
-    int*                steps_;  //! ptr
-    float*              scales_; //! ptr
+    std::vector<int>*   steps_;
+    // int*                steps_;  //! ptr
+    std::vector<float>* scales_;
+    // float*              scales_; //! ptr
     int                 numSteps_;
     // parameters for policy EXP, SIG
     float               gamma_;
-
     int                 maxBatches_;
     // Once burnIn_ is set, when number of updates is less than burnIn_
     // instead of using the configured learning rate update policy, the following formula is used
     // lr = base_lr * power(batch_num/burn_in, pwr)
     int                 burnIn_; 
     float               power_;
-
     float               clip_;
-
     //output
     int                 numOutputs_;
-    float*              outputData_;
+    std::vector<float>* outputData_;
+    // float*              outputData_;
     int                 truth_; // no idea what this stands for
-    float*              truthData_;
-
-
-    //input
-    float*              inputData_; // input_ stands for the input data of current layer, this kind of data could be from the output of former layer in network.
-
-
-    // workspace
-    float*              workspace_; // workspace_ stands for a temp space for calculating and updating parameters.
-
+    std::vector<float>* truthData_;
+    // float*              truthData_; // the label data for inputData_;
+    // inputData_ stands for the input data of current layer, this kind of data could be from the output of former layer in network.
+    std::vector<float>* inputData_;
+    // float*              inputData_;
+    std::vector<float>* deltas_;
+    // float*              deltas_; 
+    // workspace 
+    std::vector<float>* workspace_;
+    // float*              workspace_; // workspace_ stands for a temp space for calculating and updating parameters.
+    // TrainMode or InferMode
+    NETWORK_MODE         networkMode_;
     // float*              output;
     // LearningRatePolicy  policy;
     
@@ -123,7 +129,8 @@ typedef struct Network{
     // float *workspace;
     // int train;
     // int index;
-    float *cost_; 
+    std::vector<float>* cost_;
+    // float *cost_; 
 } Network;
 
 typedef struct SizeParams{
@@ -181,15 +188,26 @@ namespace NetworkOP{
     /*
         @brief loading learning rate policy from char array expected.
     */
-    extern LearningRatePolicy   parseLearningRatePolicy(char* policy);
+    extern LEARNING_RATE_POLICY   parseLearningRatePolicy(char* policy);
+
+    /*
+        @brief resize the network according to new w and new h.
+    */
+    extern void                 resizeNetwork(Network* net, int w, int h);
 
     /* @brief functions for initializing the parameters for learning rate policy*/
-    extern void                 initializePolicy(LearningRatePolicy policy);
+    extern void                 initializePolicy(LEARNING_RATE_POLICY policy);
+
     extern void                 stepInitialize(Network* net, NodeList* options);
+
     extern void                 stepsInitialize(Network* net, NodeList* options);
+
     extern void                 expInitialize(Network* net, NodeList* options);
+
     extern void                 sigInitialize(Network* net, NodeList* options);
+
     extern void                 polyInitialize(Network* net, NodeList*options);
+
     extern void                 randomInitialize(Network*net, NodeList*options);
 
     /* @brief functions for initializing involving parameters via LearningRatePolicy expected. */
@@ -198,12 +216,24 @@ namespace NetworkOP{
     extern parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType);
 
     extern Layer                parseConvolutionalLayer(NodeList* options, SizeParams& params);
+
     extern Layer                parseFullyConnectedLayer(NodeList* options, SizeParams& params);
 
     /*
         @brief get the layer of output.
     */
     extern Layer                getOutputLayer(Network net);
+
+    /*
+        @brief the implement of forward propagation of network
+    */
+    extern float*                 predictNetwork(Network net, float* inputData);
+    extern std::vector<float>*    predictNetwork(Network net, std::vector<float>* inputData);
+    /*
+        @brief method forwardLayers is called by forwardNetwork().
+    */
+    extern void                 forwardNetwork(Network net);
+
 }
 
 #endif

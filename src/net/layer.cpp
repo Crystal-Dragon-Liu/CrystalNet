@@ -9,101 +9,101 @@ namespace LayerOP{
                 return;
         }
         // weights
-        if(l.weights) DEALLOC_FLOAT_PTR(l.weights);
-        if(l.weightUpdates) DEALLOC_FLOAT_PTR(l.weightUpdates);
-        if(l.biases) DEALLOC_FLOAT_PTR(l.biases);
-        if(l.biasesUpdates) DEALLOC_FLOAT_PTR(l.biasesUpdates);
+        if(l.weights) delete l.weights;
+        if(l.weightUpdates) delete l.weightUpdates;
+        if(l.biases) delete l.biases;
+        if(l.biasesUpdates) delete l.biasesUpdates;
         
         // output
-        if(l.outputData) DEALLOC_FLOAT_PTR(l.outputData);
-        if(l.deltas) DEALLOC_FLOAT_PTR(l.deltas);
+        if(l.outputData) delete l.outputData;
+        if(l.deltas) delete l.deltas;
         // binary weights
-        if(l.binaryWeights) DEALLOC_FLOAT_PTR(l.binaryWeights);
-        if(l.cWeights) DEALLOC_CHAR_PTR(l.cWeights);
-        if(l.scales) DEALLOC_FLOAT_PTR(l.scales);
+        if(l.binaryWeights) delete l.binaryWeights;
+        if(l.cWeights) delete l.cWeights;
+        if(l.scales) delete l.scales;
 
         // xnor
-        if(l.binaryInput) DEALLOC_FLOAT_PTR(l.binaryInput);
+        if(l.binaryInput) delete l.binaryInput;
         // batch normalization
-        if(l.scaleUpdates) DEALLOC_FLOAT_PTR(l.scaleUpdates);
-        if(l.mean) DEALLOC_FLOAT_PTR(l.mean);
-        if(l.variance) DEALLOC_FLOAT_PTR(l.variance);
-        if(l.meanDelta) DEALLOC_FLOAT_PTR(l.meanDelta);
-        if(l.varianceDelta) DEALLOC_FLOAT_PTR(l.varianceDelta);
-        if(l.rollingMean) DEALLOC_FLOAT_PTR(l.rollingMean);
-        if(l.rollingVariance) DEALLOC_FLOAT_PTR(l.rollingVariance);
-        if(l.x) DEALLOC_FLOAT_PTR(l.x);
-        if(l.xNorm) DEALLOC_FLOAT_PTR(l.xNorm);
+        if(l.scaleUpdates) delete l.scaleUpdates;
+        if(l.mean) delete l.mean;
+        if(l.variance) delete l.variance;
+        if(l.meanDelta) delete l.meanDelta;
+        if(l.varianceDelta) delete l.varianceDelta;
+        if(l.rollingMean) delete l.rollingMean;
+        if(l.rollingVariance) delete l.rollingVariance;
+        if(l.x) delete l.x;
+        if(l.xNorm) delete l.xNorm;
         // adam
-        if(l.adamM) DEALLOC_FLOAT_PTR(l.adamM);
-        if(l.adamV) DEALLOC_FLOAT_PTR(l.adamV);
-        if(l.adamBiasM) DEALLOC_FLOAT_PTR(l.adamBiasM);
-        if(l.adamScaleM) DEALLOC_FLOAT_PTR(l.adamScaleM);
-        if(l.adamBiasV) DEALLOC_FLOAT_PTR(l.adamBiasV);
-        if(l.adamScaleV) DEALLOC_FLOAT_PTR(l.adamScaleV);
+        if(l.adamM) delete l.adamM;
+        if(l.adamV) delete l.adamV;
+        if(l.adamBiasM) delete l.adamBiasM;
+        if(l.adamScaleM) delete l.adamScaleM;
+        if(l.adamBiasV) delete l.adamBiasV;
+        if(l.adamScaleV) delete l.adamScaleV;
     }
 
     void        initializeWeightNormal(Layer* l, int scaleSize){
         PRINT_LOG("initializing weights");
         float scale = sqrt(2./(scaleSize));
         for(int i = 0; i < l->numWeights; ++i) 
-        l->weights[i] = scale*UtilFunc::randNormal();
+        (*l->weights)[i] = scale*UtilFunc::randNormal();
     }
 
     void        initializeWeightUniform(Layer* l, int scaleSize, int weightSize){
         PRINT_LOG("initializing weights");
         float scale = sqrt(2./scaleSize);
         for(int i = 0; i < weightSize;i++){
-            l->weights[i] = scale*UtilFunc::randUniform(-1, 1);
+            (*l->weights)[i] = scale*UtilFunc::randUniform(-1, 1);
         }
     }
 
     void        zeroBiases(Layer* l, int biasesSize){
         PRINT_LOG("initializing bias with 0.");
         for(int i = 0; i < biasesSize; ++i){
-        l->biases[i] = 0;
+        (*l->biases)[i] = 0;
         }
     }
 
     void        binaryWeightInit(Layer* l, int weightSize, int scaleSize){
         PRINT_LOG("setting parameters for binary weights");
-        l->binaryWeights = ALLOC_FLOAT_PTR(weightSize);
-        l->cWeights      = ALLOC_CHAR_PTR(weightSize);
-        l->scales        = ALLOC_FLOAT_PTR(scaleSize);
+        l->binaryWeights = new std::vector<float>(weightSize);
+        l->cWeights      = new std::vector<char>(weightSize);
+        l->scales        = new std::vector<float>(scaleSize);
     }
 
     void        xnorInit(Layer* l, int weightSize){
         PRINT_LOG("setting parameters for binary input and weights");
-        l->binaryWeights = ALLOC_FLOAT_PTR(weightSize);
-        l->binaryInput = ALLOC_FLOAT_PTR(l->numInputs*l->batchSize);
+        l->binaryWeights = new std::vector<float>(weightSize);
+        l->binaryInput = new std::vector<float>(l->numInputs*l->batchSize);
     }
 
     void        batchNormalInit(Layer *l, int n){
         PRINT_LOG("setting parameters for BatchNormalization");
-        l->scales = ALLOC_FLOAT_PTR(n);
-        l->scaleUpdates = ALLOC_FLOAT_PTR(n);
+        l->scales = new std::vector<float>(n);
+        l->scaleUpdates = new std::vector<float>(n);
         for(int i = 0; i < n; i++){
-                l->scales[i] = 1;
+                (*l->scales)[i] = 1;
         }
-        l->mean = ALLOC_FLOAT_PTR(n);
-        l->variance = ALLOC_FLOAT_PTR(n);
-        l->meanDelta = ALLOC_FLOAT_PTR(n);
-        l->varianceDelta =ALLOC_FLOAT_PTR(n);
-        l->rollingMean = ALLOC_FLOAT_PTR(n);
-        l->rollingVariance = ALLOC_FLOAT_PTR(n);
-        l->x = ALLOC_FLOAT_PTR(l->batchSize * l->numOutputs);
-        l->xNorm = ALLOC_FLOAT_PTR(l->batchSize * l->numOutputs);
+        l->mean = new std::vector<float>(n);
+        l->variance = new std::vector<float>(n);
+        l->meanDelta = new std::vector<float>(n);
+        l->varianceDelta =new std::vector<float>(n);
+        l->rollingMean = new std::vector<float>(n);
+        l->rollingVariance = new std::vector<float>(n);
+        l->x = new std::vector<float>(l->batchSize * l->numOutputs);
+        l->xNorm = new std::vector<float>(l->batchSize * l->numOutputs);
     }
 
     void        adamInit(Layer* l, int weightSize, int n){
         PRINT_LOG("setting parameters for Adam.");
         l->adam = true;
-        l->adamM = ALLOC_FLOAT_PTR(weightSize);
-        l->adamV = ALLOC_FLOAT_PTR(weightSize);
-        l->adamBiasM = ALLOC_FLOAT_PTR(n);
-        l->adamScaleM = ALLOC_FLOAT_PTR(n);
-        l->adamBiasV = ALLOC_FLOAT_PTR(n);
-        l->adamScaleV = ALLOC_FLOAT_PTR(n);
+        l->adamM = new std::vector<float>(weightSize);
+        l->adamV = new std::vector<float>(weightSize);
+        l->adamBiasM = new std::vector<float>(n);
+        l->adamScaleM = new std::vector<float>(n);
+        l->adamBiasV = new std::vector<float>(n);
+        l->adamScaleV = new std::vector<float>(n);
     }
 
     Layer       makeLayer(){

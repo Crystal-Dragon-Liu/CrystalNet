@@ -19,10 +19,11 @@ namespace CONVOLUTIONAL_OP{
         l.padSize = padding;
         l.batchNormalize = batch_normalize;
         // initialize weights. num of weights = channels * filterNum * filterSize* filterSize.
-        l.weights = ALLOC_FLOAT_PTR(c*n*size*size);
-        l.weightUpdates = ALLOC_FLOAT_PTR(c*n*size*size);
-        l.biases = ALLOC_FLOAT_PTR(n);
-        l.biasesUpdates = ALLOC_FLOAT_PTR(n);
+        // l.weights = ALLOC_FLOAT_PTR(c*n*size*size);
+        l.weights = new std::vector<float>(c*n*size*size);
+        l.weightUpdates = new std::vector<float>(c*n*size*size);
+        l.biases = new std::vector<float>(n);
+        l.biasesUpdates = new std::vector<float>(n);
         l.numWeights = c*n*size*size;
         l.numBiases  = n;
         LayerOP::initializeWeightNormal(&l, c*size*size);
@@ -36,8 +37,9 @@ namespace CONVOLUTIONAL_OP{
         // calculate num of input.
         l.numInputs = l.width * l.height * l.channel;
         // initialize relative data.
-        l.outputData = ALLOC_FLOAT_PTR(l.batchSize * l.numOutputs);
-        l.deltas    = ALLOC_FLOAT_PTR(l.batchSize * l.numOutputs);
+        l.outputData = new std::vector<float>(l.batchSize * l.numOutputs);
+        // l.outputData = ALLOC_FLOAT_PTR(l.batchSize * l.numOutputs);
+        l.deltas    = new std::vector<float>(l.batchSize * l.numOutputs);
         // initialize functions for forwarding, backwarding, updating parameters.
         l.forward  = forwardConvLayer;
         l.backward = backwardConvLayer;
@@ -75,9 +77,9 @@ namespace CONVOLUTIONAL_OP{
         int k = l.filterSize*l.filterSize*l.channel; // size of each kernel in this Conv layer
         int n = out_h* out_w;
 
-        float* weights = l.weights;
-        float* workspace = network.workspace_;
-        float* outputData = l.outputData;
+        std::vector<float>* weights = l.weights;
+        std::vector<float>* workspace = network.workspace_;
+        std::vector<float>* outputData = l.outputData;
         for(int i = 0; i < l.batchSize; ++i){
             // Convolutional Algorithm for each batch.
 			// run img2col
@@ -92,6 +94,8 @@ namespace CONVOLUTIONAL_OP{
             // update the pointer of batchData.
             network.inputData_ += l.channel * l.height * l.width;
         }
+        // TODO batch normalization
+        // TODO activation
     }
     
     void                backwardConvLayer(Layer layer, Network network){}

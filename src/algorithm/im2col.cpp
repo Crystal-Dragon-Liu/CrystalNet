@@ -1,7 +1,7 @@
 #include "include/algorithm/im2col.h"
 #include <stdio.h>
 
-void im2ColCPU(float* batchData, int channels, int height, int width, int kernelSize, int stride, int pad, float* dataCol){
+void im2ColCPU(std::vector<float>* batchData, int channels, int height, int width, int kernelSize, int stride, int pad, std::vector<float>* dataCol){
     // int c, h, w;
     int heightCol = (height + 2*pad - kernelSize) / stride + 1;
     int widthCol = (width + 2*pad - kernelSize) / stride + 1;
@@ -21,7 +21,7 @@ void im2ColCPU(float* batchData, int channels, int height, int width, int kernel
                 int imRow = heightOffset + h * stride; // initial row index when we accessing image.
                 int imCol = widthOffset + w*stride; // initial col index when we accessing image.
                 int colIndex = (c*heightCol + h) * widthCol + w; // find the index of dataCol to fill.
-                dataCol[colIndex] = getPixelIm2col(batchData, 
+                (*dataCol)[colIndex] = getPixelIm2col(batchData, 
                 height, width, channels, 
                 imRow, imCol, channelOffset, pad);
             }
@@ -30,7 +30,7 @@ void im2ColCPU(float* batchData, int channels, int height, int width, int kernel
 }
 
 
-float getPixelIm2col(float* img_data, int img_width, int img_height, int img_channels, int index_row, int index_col,int index_c, int padding){
+float getPixelIm2col(std::vector<float>* img_data, int img_width, int img_height, int img_channels, int index_row, int index_col, int index_c, int padding){
     //! index_row is  the row index on padded image.
     index_row -= padding;
     index_col -= padding;
@@ -38,5 +38,5 @@ float getPixelIm2col(float* img_data, int img_width, int img_height, int img_cha
         || index_row >= img_height || index_col >= img_width) // consider the index at lower right corner of image.
         return 0;
     // index_c * img_height * img_width + img_width* index_row + index_col
-    return img_data[index_col + img_width*(index_row + img_height*index_c)];
+    return (*img_data)[index_col + img_width*(index_row + img_height*index_c)];
 }

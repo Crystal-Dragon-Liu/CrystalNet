@@ -14,21 +14,21 @@ namespace GEMM_ALGO{
     */
     void gemm(bool transposeA, bool transposeB, int M, int N, int K,
                 float ALPHA, 
-                float* A, int lda, float* B, int ldb,
+                std::vector<float>* A, int lda, std::vector<float>* B, int ldb,
                 float BETA, 
-                float*C, int ldc){
-        gemm_cpu(transposeA, transposeB, M, N, K, ALPHA, A, lda, B, ldb, BETA, C, ldc);
+                std::vector<float>* C, int ldc){
+                gemm_cpu(transposeA, transposeB, M, N, K, ALPHA, A, lda, B, ldb, BETA, C, ldc);
     }
 
     void gemm_cpu(bool transposeA, bool transposeB, int M, int N, int K,
                 float ALPHA, 
-                float* A, int lda, float* B, int ldb,
+                std::vector<float>* A, int lda, std::vector<float>* B, int ldb,
                 float BETA, 
-                float*C, int ldc){
+                std::vector<float>* C, int ldc){
                 int i, j;
                 for(i = 0; i < M; i++){
                     for(j=0; j < N; j++){
-                        C[i*ldc + j]*= BETA;
+                        (*C)[i*ldc + j]*= BETA;
                     }
                 }
         if(!transposeA && !transposeB){
@@ -39,15 +39,15 @@ namespace GEMM_ALGO{
                 
     void gemm_nn(int M, int N, int K,
                 float ALPHA, 
-                float* A, int lda, float* B, int ldb,
+                std::vector<float>* A, int lda, std::vector<float>* B, int ldb,
                 float BETA, 
-                float*C, int ldc){
+                std::vector<float>* C, int ldc){
         int i, j, k;
         for(i = 0; i < M; i++){
             for(k = 0; k < K; k++){
-                float A_part = ALPHA * A[lda* i + k];
+                float A_part = ALPHA * (*A)[lda* i + k];
                 for(j = 0; j < N; j++){
-                    C[i*ldc + j] += A_part* B[ldb*k+j];
+                    (*C)[i*ldc + j] += A_part* (*B)[ldb*k+j];
                 }
             }
         }

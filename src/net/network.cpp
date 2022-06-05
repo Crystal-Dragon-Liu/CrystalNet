@@ -23,14 +23,17 @@ namespace NetworkOP{
         Network network;
         network.totalLayerNum_ = n;
         network.layers_ = ALLOC_LAYER(network.totalLayerNum_);
-        network.seen_ = ALLOC_SIZE_PTR(1);
-        network.cost_ = ALLOC_FLOAT_PTR(1);
+        // network.seen_ = ALLOC_SIZE_PTR(1);
+        network.seen_ = new std::vector<size_t>(1, 0);
+        // network.cost_ = ALLOC_FLOAT_PTR(1);
+        network.cost_ = new std::vector<float>(1, 0);
         network.steps_ = nullptr;
         network.scales_ = nullptr;
         network.outputData_ = nullptr;
         network.inputData_ = nullptr;
         network.truthData_ = nullptr;
         network.workspace_ = nullptr;
+        network.deltas_ = nullptr;
         return network;
     }
 
@@ -40,23 +43,28 @@ namespace NetworkOP{
             LayerOP::freeLayer(net->layers_[i]);
         }
         if(net->layers_) DEALLOC_LAYER(net->layers_);
-        if(net->seen_) DEALLOC_SIZE_PTR(net->seen_);
-        // SizeAllocator::deallocate(net.seen_);
-        if(net->cost_) DEALLOC_FLOAT_PTR(net->cost_);
-        // if(net->outputData_) DEALLOC_FLOAT_PTR(net->outputData_);
-        if(net->inputData_) DEALLOC_FLOAT_PTR(net->inputData_);
-        if(net->truthData_) DEALLOC_FLOAT_PTR(net->truthData_);
-        if(net->workspace_) DEALLOC_FLOAT_PTR(net->workspace_);
+        if(net->seen_)      delete net->seen_;
+        if(net->cost_)      delete net->cost_; 
+        if(net->inputData_) delete net->inputData_;
+        if(net->truthData_) delete net->truthData_;
+        if(net->workspace_) delete net->workspace_;
+        if(net->deltas_)    delete net->deltas_;
         // free the space for parameters
         freeNetworkParam(net);
     }
 
     void                    freeStepParam(Network* net){
-        if(net->steps_ != nullptr) DEALLOC_INT_PTR(net->steps_);
-        if(net->scales_ != nullptr) DEALLOC_FLOAT_PTR(net->scales_);
+        if(net->steps_ != nullptr) delete net->steps_;
+        if(net->scales_ != nullptr) delete net->scales_;
     }
 
     void                    freeNetworkParam(Network* net){freeStepParam(net);}
+
+
+    void                 resizeNetwork(Network* net, int w, int h){
+        
+    }
+
 
     Network                 parseNetworkConfig(const char* fileName){
         // read network configuration.
@@ -127,13 +135,14 @@ namespace NetworkOP{
         net.truth_ = outputLayer.numOutputs;
         if(net.layers_[net.totalLayerNum_-1].truth) net.truth_ = net.layers_[net.totalLayerNum_-1].truth;
         net.outputData_ = outputLayer.outputData;
-        net.inputData_  = ALLOC_FLOAT_PTR(net.numInputs_*net.batch_);
-        net.truthData_  =  ALLOC_FLOAT_PTR(net.truth_*net.batch_);
+        net.inputData_  = new std::vector<float>(net.numInputs_*net.batch_);
+        net.truthData_  = new std::vector<float>(net.truth_*net.batch_);
         // free all nodeList;
         NodeOP::freeNodeList(sections, UtilFunc::freeConfigSection);
         //TODO GPU
         if(workplaceSize){
-            net.workspace_ = reinterpret_cast<float*>(calloc(1, workplaceSize));
+            net.workspace_ = new std::vector<float>(workplaceSize);
+            // reinterpret_cast<float*>(calloc(1, workplaceSize));
         }
         return net;
     }
@@ -145,7 +154,7 @@ namespace NetworkOP{
 
     void                    loadNetworkCommonConfig(NodeList* options, Network* net){
         using namespace std;
-        PRINT_LOG("<---loading common parameters!--->");
+        PRINT("<---loading common parameters!--->");
         net->batch_ =           CONFIG_FIND_I(options,"batch", 1);
         net->learningRate_ =    CONFIG_FIND_F(options, "learning_rate", .001);
         net->decay_ =           CONFIG_FIND_F(options, "decay", .0001);
@@ -186,19 +195,19 @@ namespace NetworkOP{
         // TODO parse learning rate policy and initialize involved parameters.
         initLrParam(net, options);
         net->maxBatches_ =        CONFIG_FIND_I(options, "max_batches", 0);
-        PRINT_LOG("<---finished to load common parameters!--->");
+        PRINT("<---finished to load common parameters!--->");
     }
 
-    LearningRatePolicy      parseLearningRatePolicy(char* policy){
-        if (strcmp(policy, "random")==0) return LearningRatePolicy::RANDOM;
-        if (strcmp(policy, "poly")==0) return LearningRatePolicy::POLY;
-        if (strcmp(policy, "constant")==0) return LearningRatePolicy::CONSTANT;
-        if (strcmp(policy, "step")==0) return LearningRatePolicy::STEP;
-        if (strcmp(policy, "exp")==0) return LearningRatePolicy::EXP;
-        if (strcmp(policy, "sigmoid")==0) return LearningRatePolicy::SIG;
-        if (strcmp(policy, "steps")==0) return LearningRatePolicy::STEPS;
+    LEARNING_RATE_POLICY      parseLearningRatePolicy(char* policy){
+        if (strcmp(policy, "random")==0) return LEARNING_RATE_POLICY::RANDOM;
+        if (strcmp(policy, "poly")==0) return LEARNING_RATE_POLICY::POLY;
+        if (strcmp(policy, "constant")==0) return LEARNING_RATE_POLICY::CONSTANT;
+        if (strcmp(policy, "step")==0) return LEARNING_RATE_POLICY::STEP;
+        if (strcmp(policy, "exp")==0) return LEARNING_RATE_POLICY::EXP;
+        if (strcmp(policy, "sigmoid")==0) return LEARNING_RATE_POLICY::SIG;
+        if (strcmp(policy, "steps")==0) return LEARNING_RATE_POLICY::STEPS;
         PRINT("Couldn't find policy <", policy, ">, going with constant\n");
-        return LearningRatePolicy::CONSTANT;
+        return LEARNING_RATE_POLICY::CONSTANT;
     }
 
     void                    stepInitialize(Network* net, NodeList* options){
@@ -216,18 +225,20 @@ namespace NetworkOP{
         for(i = 0; i < len; ++i){
             if (l[i] == ',') ++n;
         }
-        int* steps = ALLOC_INT_PTR(n);
-        float* scales = ALLOC_FLOAT_PTR(n);
+        // int* steps = ALLOC_INT_PTR(n);
+        net->steps_ = new std::vector<int>(n);
+        net->scales_ = new std::vector<float>(n);
+        // float* scales = ALLOC_FLOAT_PTR(n);
         for(i = 0; i < n; ++i){
             int step    = UtilFunc::charToInt(l);
             float scale = UtilFunc::charToFloat(p);
             l = strchr(l, ',')+1;
             p = strchr(p, ',')+1;
-            steps[i] = step;
-            scales[i] = scale;
+            (*net->steps_)[i] = step;
+            (*net->scales_)[i] = scale;
         }
-        net->steps_ = steps;
-        net->scales_ = scales;
+        // net->steps_ = steps;
+        // net->scales_ = scales;
         net->numSteps_ = n;
     }
 
@@ -244,10 +255,10 @@ namespace NetworkOP{
     
     void                    randomInitialize(Network*net, NodeList*options){}
     
-    void                    initializePolicy(LearningRatePolicy policy){
+    void                    initializePolicy(LEARNING_RATE_POLICY policy){
         switch (policy)
         {
-        case LearningRatePolicy::STEP:
+        case LEARNING_RATE_POLICY::STEP:
             /* code */
             break;
         
@@ -259,11 +270,11 @@ namespace NetworkOP{
     void                    initLrParam(Network* net, NodeList* options){
         switch (net->learningRatePolicy_)
         {
-        case LearningRatePolicy::STEP:{stepInitialize(net, options);break;}
-        case LearningRatePolicy::STEPS:{stepsInitialize(net, options);break;}
-        case LearningRatePolicy::EXP:{expInitialize(net, options);break;}
-        case LearningRatePolicy::SIG:{sigInitialize(net, options);break;}
-        case LearningRatePolicy::POLY:{polyInitialize(net, options);break;}
+        case LEARNING_RATE_POLICY::STEP:{stepInitialize(net, options);break;}
+        case LEARNING_RATE_POLICY::STEPS:{stepsInitialize(net, options);break;}
+        case LEARNING_RATE_POLICY::EXP:{expInitialize(net, options);break;}
+        case LEARNING_RATE_POLICY::SIG:{sigInitialize(net, options);break;}
+        case LEARNING_RATE_POLICY::POLY:{polyInitialize(net, options);break;}
         default:
             break;
         }
@@ -335,5 +346,41 @@ namespace NetworkOP{
         }
         return net.layers_[i];
     }
+
+    float*                 predictNetwork(Network net, float* inputData){
+        // net.inputData_ = inputData;
+        // // set the mode of network
+        // net.networkMode_ = NETWORK_MODE::INFER;
+        // forwardNetwork(net);
+		// return net.outputData_;
+        return nullptr;
+    }
+
+    std::vector<float>*    predictNetwork(Network net, std::vector<float>* inputData){
+        net.inputData_ = inputData;
+        net.networkMode_ = NETWORK_MODE::INFER;
+        forwardNetwork(net);
+        return net.outputData_;
+    }
+
+    void                 forwardNetwork(Network net){
+        int layerNum = net.totalLayerNum_;
+        for(int i = 0; i < layerNum; i++){
+            Layer* l = &(net.layers_[i]);
+            // assignment for delta.
+            if(l->deltas)
+            {
+                //TODO process l->deltas.
+            }
+            l->forward(*l, net);
+            net.inputData_ = l->outputData;
+            //TODO figure out what the l->truth is.
+            if(l->truth)
+                net.truthData_ = l->outputData;
+        }
+        //TODO calculate cost.
+    }
+
+
 }
 

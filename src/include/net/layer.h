@@ -55,10 +55,10 @@ struct Layer{
     int         filterSize; // the size of each filter.
     int         padSize; // padding size.
 
-    float*      weights;
-    float*      weightUpdates; // the derivative of error with respect to weight
-    float*      biases;
-    float*      biasesUpdates;
+    std::vector<float>*     weights;
+    std::vector<float>*     weightUpdates; // the derivative of error with respect to weight
+    std::vector<float>*     biases;
+    std::vector<float>*     biasesUpdates;
     int         numWeights;
     int         numBiases;
 
@@ -68,37 +68,37 @@ struct Layer{
     int         outputChannel;
     int         numOutputs;
     int         numInputs;
-    float*      outputData; // the output data with dimension(l.out_h * l.out_w * l.out_c * l.batch)
-    float*      deltas;
+    std::vector<float>*     outputData; // the output data with dimension(l.out_h * l.out_w * l.out_c * l.batch)
+    std::vector<float>*     deltas;
 
 
     //binary weight
-    float*      binaryWeights;
-    char*       cWeights;
-    float*      scales; // also used in BatchNormalization
+    std::vector<float>*     binaryWeights;
+    std::vector<char>*      cWeights;
+    std::vector<float>*     scales; // also used in BatchNormalization
 
     //xnor 
-    float*      binaryInput;
+    std::vector<float>*     binaryInput;
     
     // batch normalization
-    float*      scaleUpdates;
-    float*      mean;
-    float*      variance;
-    float*      meanDelta;
-    float*      varianceDelta;
-    float*      rollingMean;
-    float*      rollingVariance;
-    float*      x;
-    float*      xNorm;
+    std::vector<float>*     scaleUpdates;
+    std::vector<float>*     mean;
+    std::vector<float>*     variance;
+    std::vector<float>*     meanDelta;
+    std::vector<float>*     varianceDelta;
+    std::vector<float>*     rollingMean;
+    std::vector<float>*     rollingVariance;
+    std::vector<float>*     x;
+    std::vector<float>*     xNorm;
 
     // adam
     bool         adam;
-    float*      adamM;
-    float*      adamV;
-    float*      adamBiasM;
-    float*      adamScaleM;
-    float*      adamBiasV;
-    float*      adamScaleV;
+    std::vector<float>*     adamM;
+    std::vector<float>*     adamV;
+    std::vector<float>*     adamBiasM;
+    std::vector<float>*     adamScaleM;
+    std::vector<float>*     adamBiasV;
+    std::vector<float>*     adamScaleV;
     float               B1;
     float               B2;
     float               eps;

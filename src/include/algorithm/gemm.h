@@ -1,5 +1,6 @@
 #ifndef CRYSTALNET_GEMM_H
 #define CRYSTALNET_GEMM_H
+#include <vector>
 
 namespace GEMM_ALGO{
     /*
@@ -13,23 +14,24 @@ namespace GEMM_ALGO{
         @parameters transposeA: transpose Matrix A or not
                     transposeB; transpose Matrix B or not
     */
+
     extern void gemm(bool transposeA, bool transposeB, int M, int N, int K,
                 float ALPHA, 
-                float* A, int lda, float* B, int ldb,
+                std::vector<float>* A, int lda, std::vector<float>* B, int ldb,
                 float BETA, 
-                float*C, int ldc);
+                std::vector<float>* C, int ldc);
 
     extern void gemm_cpu(bool transposeA, bool transposeB, int M, int N, int K,
                 float ALPHA, 
-                float* A, int lda, float* B, int ldb,
+                std::vector<float>* A, int lda, std::vector<float>* B, int ldb,
                 float BETA, 
-                float*C, int ldc);
+                std::vector<float>* C, int ldc);
                 
     extern void gemm_nn(int M, int N, int K,
                 float ALPHA, 
-                float* A, int lda, float* B, int ldb,
+                std::vector<float>* A, int lda, std::vector<float>* B, int ldb,
                 float BETA, 
-                float*C, int ldc);
+                std::vector<float>* C, int ldc);
 }
 
 #endif
