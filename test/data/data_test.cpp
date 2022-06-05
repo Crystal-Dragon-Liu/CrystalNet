@@ -186,11 +186,11 @@ TEST(BasicListTest, Test8){
 	int size = net.width_;
 	Image* resized = ImageFunc::resizeImageMin(new_image, size);
 	ImageFunc::printShape(resized);
-	float* X = resized->getData();
+	// auto X = resized->getData();
 	//	float* prediction = NetworkOP::predictNetwork(net, X);
-	int x_len = UtilFunc::getLengthOfArray(X);
-	PRINT("input data [2351] -> ", X[2351]);
-	PRINT("input data's length -> ", x_len);
+	// int x_len = UtilFunc::getLengthOfArray(X);
+	// PRINT("input data [2351] -> ", X[2351]);
+	// PRINT("input data's length -> ", x_len);
 	// release allocated space 
 	NodeOP::freeNodeList(dataConfig, UtilFunc::freeKyp);
 	if(resized->getData() != new_image->getData()) ImageFunc::freeImage(resized);

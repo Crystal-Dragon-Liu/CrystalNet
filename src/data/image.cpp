@@ -11,20 +11,22 @@ extern "C"{
 void Image::setData(float* data, size_t w, size_t h, size_t c){
     if(this->data_){
         // remove data_. maybe this operation is so fxxkin dangerous.
-        float* data_temp = this->data_;
-        ImageFunc::freeRawData(data_temp);
-        // dataCitemAllocator::deallocate(data_temp);
+        std::vector<float>* temp = this->data_;
+        delete temp;
     }
-    this->data_ = data;
+    this->data_ = new std::vector<float>(w*h*c);
+    for(int i = 0; i < w*h*c; i++){
+        (*this->data_)[i] = data[i];
+    }
     this->w_    = w;
     this->h_    = h;
     this->c_    = c;
 }
 
 Image::Image(size_t w, size_t h, size_t c):w_(w), h_(h), c_(c), data_(nullptr){
-    float* data = ImageFunc::makeRawData(h_*w_*c_);
+    auto data = ImageFunc::makeRawData(h_*w_*c_);
     // float* data = dataCitemAllocator::allocate(h_*w_*c_, sizeof(float));
-    data_ = data;
+    this->data_ = data;
 }
 
 Image::~Image(){
@@ -38,13 +40,14 @@ Image::~Image(){
 Image& Image::operator=(Image& image){
     // delete raw data.
     if(this == &image) return *this;
-    float* rawDataTemp = data_;
+    std::vector<float>* rawDataTemp = data_;
     size_t dataLen = image.getHeight()*image.getWidth()* image.getChannels();
     data_ = ImageFunc::makeRawData(dataLen);
     // data_ = dataCitemAllocator::allocate(dataLen, sizeof(float));
     if(data_){
-        float* imageData = image.getData();
-        memcpy(data_, imageData, dataLen);
+        std::vector<float>* imageData = image.getData();
+        // memcpy(data_, imageData, dataLen);
+        std::copy(imageData->begin(), imageData->end(), data_->begin());
     }
     if(rawDataTemp)
         ImageFunc::freeRawData(rawDataTemp);
@@ -61,17 +64,17 @@ Image& Image::operator=(Image& image){
 */
 float  Image::getPixel(size_t w, size_t h, size_t c) const{
     assert(w < w_ && h < h_ && c < c_);
-    return data_[c*h_*w_ + h*w_ + w];
+    return (*data_)[c*h_*w_ + h*w_ + w];
 }
 
 void   Image::setPixel(float val, size_t w, size_t h, size_t c) {
 	assert(w < w_ && h < h_ && c < c_);
-	data_[c*h_*w_ + h * w_ + w] = val;
+	(*data_)[c*h_*w_ + h * w_ + w] = val;
 }
 
 void   Image::addPixel(float val, size_t w, size_t h, size_t c) {
 	assert(w < w_ && h < h_ && c < c_);
-	data_[c*h_*w_ + h * w_ + w] = data_[c*h_*w_ + h * w_ + w] + val;
+	(*data_)[c*h_*w_ + h * w_ + w] = (*data_)[c*h_*w_ + h * w_ + w] + val;
 }
 
 
@@ -112,7 +115,7 @@ namespace ImageFunc{
                 for(int i = 0; i < w; i++){
                     int dst_index = i + w*j + w*h*k;
                     int src_index = k + c*i + c*w*j;
-                    new_image_data[dst_index] = static_cast<float>(data[src_index])/255.;
+                    (*new_image_data)[dst_index] = static_cast<float>(data[src_index])/255.;
                     // new_image.data[dst_index] = (float)data[src_index]/255.;
                 }
             }
@@ -123,6 +126,7 @@ namespace ImageFunc{
      
     void   freeImage(Image* image){
         delete image;
+        image = nullptr;
     }
 
     Image* makeImage(size_t w, size_t h, size_t c){
@@ -131,7 +135,7 @@ namespace ImageFunc{
     }
 
     Image* resizeImage(Image* og_data, size_t w, size_t h){
-               size_t c_o = og_data->getChannels();
+        size_t c_o = og_data->getChannels();
         size_t h_o = og_data->getHeight();
         size_t w_o = og_data->getWidth();
         Image* resized = makeImage(w, h, c_o);
@@ -196,13 +200,14 @@ namespace ImageFunc{
         return resized;
     }
 
-    void   freeRawData(float* data){
-        DataCitemAllocator::deallocate(data);
+    void   freeRawData(std::vector<float>* data){
+        if(!data) return;
+        delete data;
     }
-    
-    float*  makeRawData(size_t len){
+
+    std::vector<float>* makeRawData(size_t len){
         if(len == 0) return nullptr;
-        auto data = DataCitemAllocator::allocate(len, sizeof(float));
+        auto data = new std::vector<float>(len);
         return data;
     }
 }

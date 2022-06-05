@@ -1,6 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 #include "include/Utils/common.h"
+#include <vector>
 /*
     @brief maintain a Image class contains the width, height, channels and data.
 */
@@ -26,7 +27,7 @@ public:
     size_t getWidth() const {return w_;}
     size_t getHeight() const {return h_;}
     size_t getChannels() const {return c_;}
-    float* getData() const { return data_; }
+    std::vector<float>* getData() const { return data_; }
     
     float  getPixel(size_t w, size_t h, size_t c) const;
     void   setPixel(float val, size_t w, size_t h, size_t c);
@@ -51,7 +52,8 @@ private:
     size_t w_;
     size_t h_;
     size_t c_;
-    float* data_;
+    std::vector<float>* data_;
+    // float* data_;
 };
 
 namespace ImageFunc{
@@ -75,9 +77,9 @@ namespace ImageFunc{
     */
     extern void   freeImage(Image* data);
 
-    extern void   freeRawData(float*);
+    extern void   freeRawData(std::vector<float>* data);
 
-    extern float* makeRawData(size_t len);
+    extern std::vector<float>* makeRawData(size_t len);
 
     /*
         @brief create cache for Image.
