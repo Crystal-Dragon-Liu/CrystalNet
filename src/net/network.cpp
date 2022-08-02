@@ -23,9 +23,7 @@ namespace NetworkOP{
         Network network;
         network.totalLayerNum_ = n;
         network.layers_ = ALLOC_LAYER(network.totalLayerNum_);
-        // network.seen_ = ALLOC_SIZE_PTR(1);
         network.seen_ = new std::vector<size_t>(1, 0);
-        // network.cost_ = ALLOC_FLOAT_PTR(1);
         network.cost_ = new std::vector<float>(1, 0);
         network.steps_ = nullptr;
         network.scales_ = nullptr;
@@ -76,8 +74,6 @@ namespace NetworkOP{
         ConfigSection* s = reinterpret_cast<ConfigSection*>(node->value_);
         NodeList* options = s->config;
         if(!checkNetworkConfig(s)) UtilFunc::errorOccur("First section must be [net] or [network]");
-        // std::cout << "parsing network config" << std::endl;
-        //TODO some bugs to fix in method loadNetworkCommonConfig.
         loadNetworkCommonConfig(options, &net);
         SizeParams params;
         params.height = net.height_;
@@ -92,7 +88,6 @@ namespace NetworkOP{
         node = node->next_;
         int count = 0;
         while(node){
-            //TODO config the layer.
             params.index = count;
             PRINT_LOG("loading layer ", count, "..");
             s = reinterpret_cast<ConfigSection*>(node->value_);
@@ -126,7 +121,6 @@ namespace NetworkOP{
                 params.channals = l.outputChannel;
                 params.inputs = l.numOutputs;
             }
-            // PRINT("-- finished to load layer ", count, "..");
         }
         PRINT_LOG("finished to load all layers.");
         //TODO process output layer.
@@ -142,7 +136,6 @@ namespace NetworkOP{
         //TODO GPU
         if(workplaceSize){
             net.workspace_ = new std::vector<float>(workplaceSize);
-            // reinterpret_cast<float*>(calloc(1, workplaceSize));
         }
         return net;
     }
@@ -155,38 +148,10 @@ namespace NetworkOP{
     void                    loadNetworkCommonConfig(NodeList* options, Network* net){
         using namespace std;
         PRINT("<---loading common parameters!--->");
-        net->batch_ =           CONFIG_FIND_I(options,"batch", 1);
+		// learning rate
         net->learningRate_ =    CONFIG_FIND_F(options, "learning_rate", .001);
         net->decay_ =           CONFIG_FIND_F(options, "decay", .0001);
         net->momentum_ =        CONFIG_FIND_F(options, "momentum", .9);
-        int subdivs =           CONFIG_FIND_I(options, "subdivisions", 1);
-        net->timeSteps_ =       CONFIG_FIND_I(options, "time_steps", 1, true);
-        net->noTruth_ =         CONFIG_FIND_I(options, "notruth", 0);
-        net->batch_ /= subdivs;
-        net->batch_ *= net->timeSteps_;
-        net->subdivisions_ = net->subdivisions_;
-        // parameters for adam algorithm
-        net->adam_ =            CONFIG_FIND_I(options, "adam", 0);
-        if(net->adam_){
-            net->b1_ =          CONFIG_FIND_F(options, "B1", 0);
-            net->b2_ =          CONFIG_FIND_F(options, "B2", 0);
-            net->eps_ =         CONFIG_FIND_F(options, "eps", .00000001);
-        }
-        net->height_ =          CONFIG_FIND_I(options, "height", 0);
-        net->width_ =           CONFIG_FIND_I(options, "width", 0);
-        net->channel_ =         CONFIG_FIND_I(options, "channels", 0);
-        net->numInputs_ =       CONFIG_FIND_I(options, "inputs", net->channel_ * net->height_ * net->width_, true);
-        net->maxCrop_ =         CONFIG_FIND_I(options, "max_crop", net->width_ * 2, true);
-        net->minCrop_ =         CONFIG_FIND_I(options, "min_crop", net->width_, true);
-        net->center_ =          CONFIG_FIND_I(options, "center", 0, true);
-        net->angle_ =           CONFIG_FIND_F(options, "angle", 0, true);
-        net->aspect_ =          CONFIG_FIND_F(options, "aspect", 1, true);
-        net->saturation_ =      CONFIG_FIND_F(options, "saturation", 1, true);
-        net->exposure_ =        CONFIG_FIND_F(options, "exposure", 1, true);
-        net->hue_ =             CONFIG_FIND_F(options, "hue", 0, true);
-        // check input parameters
-        if(!net->numInputs_ && !(net->height_ && net->width_ && net->channel_) ){
-            UtilFunc::errorOccur("No input parameters supplied");}
         char* policy_s =        CONFIG_FIND_S(options, "policy", const_cast<char*>("constant"));
         net->learningRatePolicy_ = parseLearningRatePolicy(policy_s);
         //TODO initialize burn in ???
@@ -194,7 +159,35 @@ namespace NetworkOP{
         net->power_  = CONFIG_FIND_F(options, "power", 4, true);
         // TODO parse learning rate policy and initialize involved parameters.
         initLrParam(net, options);
+
+		// batches
+        net->batch_ =           CONFIG_FIND_I(options,"batch", 1);
+        net->timeSteps_ =       CONFIG_FIND_I(options, "time_steps", 1, true);
+        int subdivs =           CONFIG_FIND_I(options, "subdivisions", 1);
+        net->batch_ /= subdivs;
+        net->batch_ *= net->timeSteps_;
+        net->subdivisions_ = subdivs;
         net->maxBatches_ =        CONFIG_FIND_I(options, "max_batches", 0);
+
+        // parameters for adam algorithm
+        net->adam_ =            CONFIG_FIND_I(options, "adam", 0);
+        if(net->adam_){
+            net->b1_ =          CONFIG_FIND_F(options, "B1", 0);
+            net->b2_ =          CONFIG_FIND_F(options, "B2", 0);
+            net->eps_ =         CONFIG_FIND_F(options, "eps", .00000001);
+        }
+
+		// network's shape
+        net->height_ =          CONFIG_FIND_I(options, "height", 0);
+        net->width_ =           CONFIG_FIND_I(options, "width", 0);
+        net->channel_ =         CONFIG_FIND_I(options, "channels", 0);
+        net->numInputs_ =       CONFIG_FIND_I(options, "inputs", net->channel_ * net->height_ * net->width_, true);
+        net->maxCrop_ =         CONFIG_FIND_I(options, "max_crop", net->width_ * 2, true);
+        net->minCrop_ =         CONFIG_FIND_I(options, "min_crop", net->width_, true);
+        // check input parameters
+        if(!net->numInputs_ && !(net->height_ && net->width_ && net->channel_) ){
+            UtilFunc::errorOccur("No input parameters supplied");}
+
         PRINT("<---finished to load common parameters!--->");
     }
 
@@ -297,7 +290,7 @@ namespace NetworkOP{
     
     Layer                   parseFullyConnectedLayer(NodeList* options, SizeParams& params){
         int output = CONFIG_FIND_I(options, "output", 1);
-        char*  activationStr     =   CONFIG_FIND_S(options, "activation", "logistic");
+        char*  activationStr     =   CONFIG_FIND_S(options, "activation", const_cast<char*>("logistic"));
         ACTIVATION activation = ACT_OP::getActivation(activationStr);
         int batchNormalzation = CONFIG_FIND_I(options, "batch_normalize", 0, true);
         Layer l = FullyConnectedLayer_OP::makeFullyConnectedLayer(params.batch, params.inputs, output, activation, batchNormalzation);
@@ -313,7 +306,7 @@ namespace NetworkOP{
         if(pad){
             padding = size / 2;
         }
-        char*  activationStr     =   CONFIG_FIND_S(options, "activation", "logistic");
+        char*  activationStr     =   CONFIG_FIND_S(options, "activation", const_cast<char*>("logistic"));
         ACTIVATION activation = ACT_OP::getActivation(activationStr);
         int batch, height, width, channel;
         height = params.height;
@@ -347,14 +340,6 @@ namespace NetworkOP{
         return net.layers_[i];
     }
 
-    float*                 predictNetwork(Network net, float* inputData){
-        // net.inputData_ = inputData;
-        // // set the mode of network
-        // net.networkMode_ = NETWORK_MODE::INFER;
-        // forwardNetwork(net);
-		// return net.outputData_;
-        return nullptr;
-    }
 
     std::vector<float>*    predictNetwork(Network net, std::vector<float>* inputData){
         net.inputData_ = inputData;

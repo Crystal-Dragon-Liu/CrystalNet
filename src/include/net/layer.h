@@ -119,45 +119,10 @@ struct Layer{
     float       learningRateScale;
     float       smooth;
 
-
-
-
-    // bool        shortCut;
-    // int         batch;
-    // bool        forced;
-    // bool        flipped;
-    // int         inputs;
-    // int         outputs;
-    // int         nWeights;
-    // int         nBiases;
-    // int         extra;
-    // int         truths;
-    // int         inputHeight, inputWidth, inputChannel;
-    // int         outputHeight, outputWidth, outputChannels;
-    // int         n;
-    // int         filterSize;
-    // int         stride;
-    // int         size;
-    // int         reverse;
-    // int         flatten;
-    // int         pad;
-    // int         numClasses;
-    // int         onlyforward;
-    // int         stopbackward;
-    // int         dontload;
-    // int         dontloadscales;
-    // float       temperature;
-    // float       probability;
-    // float       scale;
-    // char*       cweights;
-    // int*        input_layers;
-    // int*        input_sizes;
-    // size_t      workspace_size;
-    // int*        indexes;
-    // float*      z_cpu;
-    // float*      r_cpu;
-    // float*      h_cpu;
 };
+
+
+
 
 namespace LayerOP{
     extern Layer makeLayer();

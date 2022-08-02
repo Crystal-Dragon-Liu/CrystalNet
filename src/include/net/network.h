@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <vector>
+
 using LayerVector = std::vector<Layer*>;
 /*@brief  learning rate policy. */
 enum class LEARNING_RATE_POLICY{
@@ -16,41 +17,32 @@ enum class NETWORK_MODE{
     TRAIN,
     INFER
 };
-// using namespace std;
 
 typedef struct Network{
     int                 totalLayerNum_;
     int                 batch_; /// the batch size of image set.
-    // !size_t*             seen_;
+	int					timeSteps_;
+	int					subdivisions_;
+
     std::vector<size_t>*     seen_; /// num of image which have been processed. //! ptr
     float               learningRate_;
     float               momentum_;
     float               decay_;
-    // float               epoch;
-    // int                 subdivisions;
-    // float               momentum;
-    // float               decay;
-    Layer*              layers_; //! ptr
-    int                 timeSteps_;
-    int                 noTruth_;
-    int                 subdivisions_;
+	Layer*              layers_; //! ptr
+    // int                 subdivisions_;
+
     int                 adam_;
-    // parameters for adam algorithm.
+    // parameters for adam algorithm. b1_, b2_, eps_
     float               b1_;
     float               b2_;
     float               eps_;
+
     int                 height_;
     int                 width_;
     int                 channel_;
     int                 numInputs_;
     int                 maxCrop_;
     int                 minCrop_;
-    int                 center_;
-    float               angle_;
-    float               aspect_;
-    float               saturation_;
-    float               exposure_;
-    float               hue_;
     LEARNING_RATE_POLICY  learningRatePolicy_;
     // parameters for policy STEP, SIG
     int                 step_;
@@ -84,53 +76,9 @@ typedef struct Network{
     // float*              deltas_; 
     // workspace 
     std::vector<float>* workspace_;
-    // float*              workspace_; // workspace_ stands for a temp space for calculating and updating parameters.
     // TrainMode or InferMode
     NETWORK_MODE         networkMode_;
-    // float*              output;
-    // LearningRatePolicy  policy;
-    
-    // float               learningRate;
-    // float               gamma;
-    // float               scale;
-    // float               power;
-    // int                 timeSteps;
-    // int                 step;
-    // int                 maxBatches;
-    // float*              scales;
-    // int*                steps;
-    // int                 numSteps;
-    // int                 burnIn;
-    // int                 adam;
-    // float               B1;
-    // float               B2;
-    // float               eps;
-
-    // int                 inputs;         
-    // int                 outputs;        
-
-    // int                 truths;
-    // int                 notruth;
-    // int                 h, w, c;
-    // int                 maxCrop;
-    // int                 minCrop;
-    // int                 center;
-    // float               angle;
-    // float               aspect;
-    // float               exposure;
-    // float               saturation;
-    // float               hue;
-    // int gpu_index;
-    // Tree *hierarchy;
-
-    // float *input;
-    // float *truth;
-    // float *delta;
-    // float *workspace;
-    // int train;
-    // int index;
     std::vector<float>* cost_;
-    // float *cost_; 
 } Network;
 
 typedef struct SizeParams{
@@ -213,10 +161,27 @@ namespace NetworkOP{
     /* @brief functions for initializing involving parameters via LearningRatePolicy expected. */
     extern void                 initLrParam(Network* net, NodeList* options);
 
+	/*
+	 	 @brief get the function pointer(parseNetLayerFunc) through enum LAYER_TYPE which supports a bunch of layers. parseNetLayerFunc could be used to initialize the corresponding layers parsed by this function.
+		 @param:
+		 		LAYER_TYPE a enum class including various layers CrystalNet.
+	 */
     extern parseNetLayerFunc    getParseNetFunc(LAYER_TYPE layerType);
 
+	/*
+	 * 	@brief initialize a convolutional layer through configuration and the information from last layer passed through.
+	 * 	@param:
+	 * 			options: a class that contains group of parameters of convolutional layers.
+	 * 			params:  instance of SizeParams contains the shape information from last layer. In the most case, we initialized the height and width of output and the input by this instances. 
+	 */
     extern Layer                parseConvolutionalLayer(NodeList* options, SizeParams& params);
 
+     /*
+	  * @brief initialize a fully connected layer through configuration and the info    rmation from last layer passed through.
+	  * @param:
+      *          options: a class that contains group of parameters of fully connected layers.
+      *          params:  instance of SizeParams contains the shape information fr om last layer. In the most case, we initialized the height and width of output and     the input by this instances. 
+	 */
     extern Layer                parseFullyConnectedLayer(NodeList* options, SizeParams& params);
 
     /*
@@ -227,7 +192,6 @@ namespace NetworkOP{
     /*
         @brief the implement of forward propagation of network
     */
-    extern float*                 predictNetwork(Network net, float* inputData);
     extern std::vector<float>*    predictNetwork(Network net, std::vector<float>* inputData);
     /*
         @brief method forwardLayers is called by forwardNetwork().

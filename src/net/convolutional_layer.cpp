@@ -19,7 +19,6 @@ namespace CONVOLUTIONAL_OP{
         l.padSize = padding;
         l.batchNormalize = batch_normalize;
         // initialize weights. num of weights = channels * filterNum * filterSize* filterSize.
-        // l.weights = ALLOC_FLOAT_PTR(c*n*size*size);
         l.weights = new std::vector<float>(c*n*size*size);
         l.weightUpdates = new std::vector<float>(c*n*size*size);
         l.biases = new std::vector<float>(n);
@@ -80,6 +79,7 @@ namespace CONVOLUTIONAL_OP{
         std::vector<float>* weights = l.weights;
         std::vector<float>* workspace = network.workspace_;
         std::vector<float>* outputData = l.outputData;
+		showConvLayerInfo(l);
         for(int i = 0; i < l.batchSize; ++i){
             // Convolutional Algorithm for each batch.
 			// run img2col
@@ -103,8 +103,36 @@ namespace CONVOLUTIONAL_OP{
     void                updateConvLayer(Layer layer, Network network){}
     
     size_t              getWorkSpaceSize(Layer l){
-        return static_cast<size_t>(l.outputHeight * l.outputWidth * l.channel * l.filterSize * l.filterSize * sizeof(float));
+        return static_cast<size_t>(l.outputHeight * l.outputWidth * l.channel * l.filterSize * l.filterSize);
     }
 
+    void				  showConvLayerRelativeMatrix(Layer l){
+		 auto weights = l.weights;
+		 auto outputData = l.outputData;
+		 
+		 int weightShape0 = l.filterNum;
+		 int weightShape1 = l.channel*l.filterSize*l.filterSize;
+		 int inputShape0 = l.channel*l.filterSize*l.filterSize;
+		 int inputShape1 = l.outputWidth * l.outputHeight;
+		 int outputShape0 = l.filterNum;
+		 int outputShape1 = l.outputHeight * l.outputWidth;
+		 
+		 PRINT("Weights'shape in conv layer -> ", "[", weightShape0, ", ", weightShape1, "], ", weights->size(), " in total.");
+		 PRINT("Regrouped inputs matrix 'shape -> [", inputShape0, ", ", inputShape1, "], ", inputShape0 * inputShape1, " in total.");
+		 PRINT("Output matrix 'shape -> ", "[", outputShape0, ", ", outputShape1, "], ", outputData->size(), " in total.");
 
+	}
+
+
+	//TODO show the name of layer.
+    void				  showConvLayerInfo(Layer l){
+		PRINT("=========CONV 2D INFO==========");
+		PRINT("Filters'shape -> ", "[",l.filterSize, ", ", l.filterSize, "]");
+		PRINT("Size of filters -> ", l.filterNum);
+		PRINT("Padding size -> ", l.padSize);
+		PRINT("Input'shape -> [", l.channel, ", ",  l.height, ", ", l.width, "]");
+		PRINT("Output'shape -> [", l.filterNum, ", ", l.outputHeight, ", ", l.outputWidth, "]");
+		showConvLayerRelativeMatrix(l);
+		PRINT("=========CONV 2D INFO==========");
+	}
 }

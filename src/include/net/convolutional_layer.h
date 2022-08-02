@@ -12,6 +12,9 @@ namespace CONVOLUTIONAL_OP{
    extern void                backwardConvLayer(Layer layer, Network network);
    extern void                updateConvLayer(Layer layer, Network network);
    extern size_t              getWorkSpaceSize(Layer l);
+   extern void				  showConvLayerRelativeMatrix(Layer l);
+   extern void				  showConvLayerInfo(Layer l); // TODO show the name of convolutional layer.
+
 
 }
 

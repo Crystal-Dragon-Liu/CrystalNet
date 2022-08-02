@@ -116,6 +116,16 @@ namespace NodeOP
 	*/
 
 	extern void  printUnusedOptions(NodeList* l);
+
+	/*
+	 *  @brief check the Node, if Node is set to null, exit this running program.
+	 */
+	inline void checkNode(Node* node){
+			if(!node) UtilFunc::errorOccur("null sections loaded from configuration file");
+			else{
+				PRINT_LOG("Node loaded successfully");	
+			}
+	}
 }
 
 	

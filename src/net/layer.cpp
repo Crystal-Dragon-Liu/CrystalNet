@@ -2,6 +2,7 @@
 #include <cstring>
 #include "include/Utils/utils.h"
 #include "include/Utils/common.h"
+
 namespace LayerOP{
     void        freeLayer(Layer l){
         if(l.type == LAYER_TYPE::DROPOUT){

@@ -6,6 +6,7 @@
 #include "include/data/matrix.h"
 #include "include/data/image.h"
 #include "include/net/network.h"
+#include "include/net/model.h"
 using namespace ImageFunc;
 Matrix* initMatrixWithValue(size_t row, size_t col, float value){
 	Matrix* matrix = new Matrix(row, col);
@@ -26,8 +27,9 @@ Matrix* initMatrixWithValue(size_t row, size_t col, float value){
 	3. find a value according to a key provided.
 	4. free NodeList.
 */
-TEST(BasicListTest, DISABLED_Test1){
-	const std::string filename("/root/test_data/coco.data");
+TEST(BasicListTest, DatasetConfigTest){
+	
+	const std::string filename("/Users/crystal-dragon-lyb/CrystalNet/cfg/cifar.data");
 	NodeList* list = ConfigIO::readDataAndCfg(filename);
 	if(!list) std::cout << "failed to load configuration." << std::endl;
 	// callbackPrintNodes pCallback = UtilFunc::printkyp;
@@ -45,7 +47,7 @@ TEST(BasicListTest, DISABLED_Test1){
 	2. create a new 'matrix_2' with the data copied from 'matrix'.
 	3. free two these Matrix obj.
 */
-TEST(BasicListTest, DISABLED_Test2)
+TEST(BasicListTest, MatrixTest_1)
 {
 	// Matrix* matrix = new Matrix(5, 5);
 	// auto data = matrix->getData();
@@ -74,7 +76,7 @@ TEST(BasicListTest, DISABLED_Test2)
 	2. create a matrix with index 2 which are sampled from matrix 1.
 	3. free them correctly.
 */
-TEST(BasicListTest, DISABLED_Test3){
+TEST(BasicListTest, MatrixTest_2){
 	Matrix* matrix_1 	=	initMatrixWithValue(5, 5, 1);
 	Matrix* matrix_2 	= new Matrix;
 	MatrixFunc::holdOutMatrix(matrix_2, matrix_1, 3);
@@ -94,12 +96,13 @@ TEST(BasicListTest, DISABLED_Test3){
 	4. resize the loaded image.
 	5. call the loadImage, and free the image returned.
 */
-TEST(BasicListTest, DISABLED_Test4){
+TEST(BasicListTest, ImageLoadTest){
 	// test 1
 	Image* image = ImageFunc::makeImage(2, 2, 2);
 	// test 2
 	ImageFunc::freeImage(image);	
-	const std::string image_path("/root/test_data/figure_test.png");
+
+	const std::string image_path("/Users/crystal-dragon-lyb/CrystalNetDataSet/cifar/test/0_cat.png");
 	// test 3
 	Image* new_image = ImageFunc::_loadImage(image_path.data(), 3);	
 	// test 4
@@ -115,45 +118,9 @@ TEST(BasicListTest, DISABLED_Test4){
 
 /*
 	Test list:
-	1. Create a NodeList to store the network configuration.
-	2. free this NodeList.
-*/
-TEST(BasicListTest, DISABLED_Test5){
-	std::string filename("/root/test_data/yolo.cfg");
-	// NodeList* list = ConfigIO::readDataAndCfg(filename);
-	NodeList* list = ConfigIO::readModelConfig(filename.data());
-	std::cout << "list -> size: " << list->size_ << std::endl;
-	NodeOP::printAllNodes(list, UtilFunc::printConfigSection);
-	NodeOP::freeNodeList(list, UtilFunc::freeConfigSection);
-	std::string test_str("12345");
-	typedef NetSimpleAlloc<char, MyNetAlloc> charAllocator;
-	char* val   =   charAllocator::allocate(6); //配置空间时，要加一个元素
-	UtilFunc::copyCharArray(val, test_str);
-	UtilFunc::printCharArray(val);
-	std::cout << std::endl;
-	free(val);
-}
-
-
-/*
-	Test list:
-	1. Create a NodeList to store the network configuration
-	2. test method named parseNetworkConfig.
-*/
-TEST(BasicListTest, DISABLED_Test6){
-	std::string filename("/root/test_data/test.cfg");
-	Network net = NetworkOP::parseNetworkConfig(filename.data());
-	// Network net = NetworkOP::makeNetwork(6);
-	// free network
-    NetworkOP::freeNetwork(&net);
-}
-
-/*
-	Test list:
 	1. Create a network for classifying cifar dataset.
 */
-TEST(BasicListTest, DISABLED_Test7){
-	// std::string fileName("/root/test_data/cifar_small.cfg");
+TEST(BasicListTest, ModelLoadTest){
 	std::string fileName("/Users/crystal-dragon-lyb/CrystalNet/cfg/classifier_model.cfg");
 	
 	Network net = NetworkOP::parseNetworkConfig(fileName.data());
@@ -166,7 +133,7 @@ TEST(BasicListTest, DISABLED_Test7){
 	2. Read an image to Read.
 */
 
-TEST(BasicListTest, Test8){
+TEST(BasicListTest, ModelLoadAndForwardTest){
 	// Read cifar.data.
 	std::string fileName("/Users/crystal-dragon-lyb/CrystalNet/cfg/cifar.data");
 	NodeList* dataConfig = ConfigIO::readDataAndCfg(fileName);
@@ -186,9 +153,12 @@ TEST(BasicListTest, Test8){
 	int size = net.width_;
 	Image* resized = ImageFunc::resizeImageMin(new_image, size);
 	ImageFunc::printShape(resized);
-	// auto X = resized->getData();
-	//	float* prediction = NetworkOP::predictNetwork(net, X);
-	// int x_len = UtilFunc::getLengthOfArray(X);
+	std::vector<float>* X = resized->getData();
+	PRINT("resized image' shape", X->size());
+
+	auto prediction = NetworkOP::predictNetwork(net, X);
+	PRINT("prediction'shape -> ", prediction->size());
+    // int x_len = UtilFunc::getLengthOfArray(X);
 	// PRINT("input data [2351] -> ", X[2351]);
 	// PRINT("input data's length -> ", x_len);
 	// release allocated space 
@@ -198,6 +168,15 @@ TEST(BasicListTest, Test8){
 	NetworkOP::freeNetwork(&net);
 }
 
+
 /*
 	Test list:
+	1. test the Model, check its constructor and desturctor.
+	2. test the parseNetworkConfig.
 */
+TEST(BasicModelTest, ModelTest){
+		CrystalNet::Model model_1(1);
+		CrystalNet::Model model_2(2);
+		model_1 = model_2;
+		CrystalNet::freeModel(&model_1);
+}
